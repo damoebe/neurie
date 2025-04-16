@@ -35,4 +35,29 @@ public class Network {
         }
         return new Layer(neurons); // returns record
     }
+
+    // updates all activations
+    public void updateAllActivations(){
+        for (Layer layer : layers){
+            for (Neuron neuron : layer.neurons()){
+                neuron.updateActivation();
+            }
+        }
+    }
+
+    // sets the input neurons activations
+    public void insertInput(List<Double> input){
+        for (int i = 0; i != input.size(); i++){
+            layers.getFirst().neurons().get(i).setActivation(input.get(i));
+        }
+    }
+
+    // returns the activations of the last layer
+    public List<Double> getOutput(){
+        List<Double> output = new ArrayList<>();
+        for (Neuron neuron : layers.getLast().neurons()){
+            output.add(neuron.getActivation());
+        }
+        return output;
+    }
 }
