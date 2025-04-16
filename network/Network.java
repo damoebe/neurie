@@ -60,4 +60,16 @@ public class Network {
         }
         return output;
     }
+
+    public double train(List<Double> input, List<Double> optimalOutput){
+        return 0; // train network by updating optimalActivations and weights
+    }
+
+    private void updateOptimalActivations(){
+        return;
+    }
+
+    private void updateAllWeights(){
+        return;
+    }
 }
