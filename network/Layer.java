@@ -1,4 +1,6 @@
 package network;
 
-public record Layer() {
+import java.util.List;
+
+public record Layer(List<Neuron> neurons) {
 }
