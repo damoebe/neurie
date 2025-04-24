@@ -34,17 +34,25 @@ public class Neuron {
     }
 
     public void updateWeights(){
-        for (Connection connection : connections){
-            double gradient = ((activation-optimalActivation) * (activation* (1- activation)) * (connection.getSourceNeuron().getActivation()));
-            connection.setWeight(connection.getWeight() - 0.1 * gradient);
-        }
-    }
+         for (Connection connection : connections){
+             double gradient = ((activation-optimalActivation) * (activation* (1- activation)) * (connection.getSourceNeuron().getActivation()));
+             connection.setWeight(connection.getWeight() - 0.1 * gradient);
+         }
+     }
 
-    public void setOptimalActivation(double optimalActivation){
-        this.optimalActivation = optimalActivation;
-    }
+     public void setOptimalActivation(double optimalActivation){
+         this.optimalActivation = optimalActivation;
+     }
 
-    private double sigmoid(double x){
-        return 1 / (1 + Math.exp(-x));
-    }
+     public double getOptimalActivation(){
+         return optimalActivation;
+     }
+
+     public List<Connection> getConnections() {
+         return connections;
+     }
+
+     private double sigmoid(double x){
+         return 1 / (1 + Math.exp(-x));
+     }
 }
