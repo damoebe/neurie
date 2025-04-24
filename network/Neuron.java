@@ -6,6 +6,7 @@ public class Neuron {
 
     private final List<Connection> connections; // List of all dependencies
     private double activation = 0; // the neurons current activation
+    private double optimalActivation = 1;
 
 
     public Neuron(List<Connection> connections){
@@ -16,10 +17,10 @@ public class Neuron {
     public void updateActivation(){
         double newActivation = 0;
         for (Connection connection : connections){
-            newActivation += connection.getWeight() * connection.getTargetNeuron().getActivation();
+            newActivation += connection.getWeight() * connection.getSourceNeuron().getActivation();
         }
         if (!connections.isEmpty()) { // if not first layer neuron
-            activation = newActivation / connections.size();
+            activation = sigmoid(newActivation);
         }
     }
 
@@ -31,30 +32,27 @@ public class Neuron {
     public void setActivation(double activation){
         this.activation = activation;
     }
-<<<<<<< Updated upstream
-=======
 
     public void updateWeights(){
-        for (Connection connection : connections){
-            double gradient = ((activation-optimalActivation) * (activation* (1- activation)) * (connection.getSourceNeuron().getActivation()));
-            connection.setWeight(connection.getWeight() - 0.1 * gradient);
-        }
-    }
+         for (Connection connection : connections){
+             double gradient = ((activation-optimalActivation) * (activation* (1- activation)) * (connection.getSourceNeuron().getActivation()));
+             connection.setWeight(connection.getWeight() - 0.1 * gradient);
+         }
+     }
 
-    public void setOptimalActivation(double optimalActivation){
-        this.optimalActivation = optimalActivation;
-    }
+     public void setOptimalActivation(double optimalActivation){
+         this.optimalActivation = optimalActivation;
+     }
 
-    public double getOptimalActivation(){
-        return optimalActivation;
-    }
+     public double getOptimalActivation(){
+         return optimalActivation;
+     }
 
-    public List<Connection> getConnections() {
-        return connections;
-    }
+     public List<Connection> getConnections() {
+         return connections;
+     }
 
-    private double sigmoid(double x){
-        return 1 / (1 + Math.exp(-x));
-    }
->>>>>>> Stashed changes
+     private double sigmoid(double x){
+         return 1 / (1 + Math.exp(-x));
+     }
 }
