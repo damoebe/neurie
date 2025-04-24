@@ -60,4 +60,66 @@ public class Network {
         }
         return output;
     }
+<<<<<<< Updated upstream
+=======
+
+    public double train(List<Double> input, List<Double> optimalOutput){
+        insertInput(input);
+        updateAllActivations();
+        List<Double> oldActivations = getOutput();
+        updateOptimalActivations(optimalOutput);
+        updateAllWeights();
+        updateAllActivations();
+        List<Double> newActivations = getOutput();
+        double avgImprovement = 0;
+        for (int i = 0; i != oldActivations.size(); i++){
+            double oldActivation = oldActivations.get(i);
+            double newActivation = newActivations.get(i);
+            double optimalActivation = optimalOutput.get(i);
+            avgImprovement += 2*oldActivation - newActivation + optimalActivation;
+        }
+        return avgImprovement / optimalOutput.size();
+    }
+    
+    private void updateOptimalActivations(List<Double> optimalOutputActivations){
+        for (int i = layers.size(); i != 0; i--){
+            if (i == layers.size()){
+                updateOutputOptimalActivations(optimalOutputActivations);
+            }else{
+                for (Neuron neuron : layers.get(i).neurons()){
+                    double optimalActivation = generateOptimalActivation(neuron, i);
+                    neuron.setOptimalActivation(optimalActivation / layers.get(i+1).neurons().size());
+                }
+            }
+        }
+    }
+
+    private double generateOptimalActivation(Neuron neuron, int layer) {
+        double optimalActivation = 0;
+        for (Neuron target : layers.get(layer +1).neurons()){
+            double weight = 1;
+            for (Connection connection : target.getConnections()){
+                if (connection.getSourceNeuron() == neuron){
+                    weight = connection.getWeight();
+                }
+            }
+            optimalActivation += target.getOptimalActivation() / weight;
+        }
+        return optimalActivation;
+    }
+
+    private void updateOutputOptimalActivations(List<Double> optimalOutputActivations){
+        for (int i = 0; i != layers.getLast().neurons().size(); i++){
+            layers.getLast().neurons().get(i).setOptimalActivation(optimalOutputActivations.get(i));
+        }
+    }
+
+    private void updateAllWeights(){
+        for (Layer layer : layers){
+            for (Neuron neuron : layer.neurons()){
+                neuron.updateWeights();
+            }
+        }
+    }
+>>>>>>> Stashed changes
 }
