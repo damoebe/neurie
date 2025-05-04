@@ -61,27 +61,16 @@ public class Network {
         return output;
     }
 
-    public double train(List<Double> input, List<Double> optimalOutput){
+    public void train(List<Double> input, List<Double> optimalOutput){
          insertInput(input);
          updateAllActivations();
-         List<Double> oldActivations = getOutput();
          updateOptimalActivations(optimalOutput);
          updateAllWeights();
-         updateAllActivations();
-         List<Double> newActivations = getOutput();
-         double avgImprovement = 0;
-         for (int i = 0; i != oldActivations.size(); i++){
-             double oldActivation = oldActivations.get(i);
-             double newActivation = newActivations.get(i);
-             double optimalActivation = optimalOutput.get(i);
-             avgImprovement += 2*oldActivation - newActivation + optimalActivation;
-         }
-         return avgImprovement / optimalOutput.size();
      }
 
      private void updateOptimalActivations(List<Double> optimalOutputActivations){
-         for (int i = layers.size(); i != 0; i--){
-             if (i == layers.size()){
+         for (int i = layers.size()-1; i >= 0; i--){
+             if (i == layers.size()-1){
                  updateOutputOptimalActivations(optimalOutputActivations);
              }else{
                  for (Neuron neuron : layers.get(i).neurons()){
@@ -94,7 +83,7 @@ public class Network {
 
      private double generateOptimalActivation(Neuron neuron, int layer) {
          double optimalActivation = 0;
-         for (Neuron target : layers.get(layer +1).neurons()){
+         for (Neuron target : layers.get(layer+1).neurons()){
              double weight = 1;
              for (Connection connection : target.getConnections()){
                  if (connection.getSourceNeuron() == neuron){
