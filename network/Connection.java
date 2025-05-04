@@ -1,11 +1,14 @@
 package network;
 
+import java.util.Random;
+
 public class Connection {
     private double weight;
     private final Neuron sourceNeuron;
 
     public Connection(Neuron targetNeuron) {
-        this.weight = 1; // initial weight for network
+        Random random = new Random();
+        this.weight = (float) (random.nextInt(20) - 10) /10; // initial weight for network
         this.sourceNeuron = targetNeuron;
     }
 
