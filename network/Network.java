@@ -7,6 +7,8 @@ public class Network {
 
     private final List<Layer> layers = new ArrayList<>(); // the whole network in a list
 
+    public static double learningRate = 0.1;
+
     public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
         // generate network
         Layer inputLayer = generateLayer(inputSize, null);
@@ -61,51 +63,57 @@ public class Network {
         return output;
     }
 
+    // uses backpropagation to update the weights with ONE set of date
     public void train(List<Double> input, List<Double> optimalOutput){
          insertInput(input);
          updateAllActivations();
          updateOptimalActivations(optimalOutput);
-         updateAllWeights();
-     }
+         updateAllWeightsAndBiases();
+    }
 
-     private void updateOptimalActivations(List<Double> optimalOutputActivations){
-         for (int i = layers.size()-1; i >= 0; i--){
-             if (i == layers.size()-1){
-                 updateOutputOptimalActivations(optimalOutputActivations);
-             }else{
-                 for (Neuron neuron : layers.get(i).neurons()){
-                     double optimalActivation = generateOptimalActivation(neuron, i);
-                     neuron.setOptimalActivation(optimalActivation / layers.get(i+1).neurons().size());
-                 }
-             }
-         }
-     }
+    // update all optimalActivations in the network
+    private void updateOptimalActivations(List<Double> optimalOutputActivations) {
+        for (int i = layers.size() - 1; i >= 0; i--) {
+            if (i == layers.size() - 1) {
+                updateOutputOptimalActivations(optimalOutputActivations);
+            } else {
+                for (Neuron neuron : layers.get(i).neurons()) {
+                    double optimalActivation = generateOptimalActivation(neuron, i);
+                    neuron.setOptimalActivation(optimalActivation / layers.get(i + 1).neurons().size());
+                }
+            }
+        }
+    }
 
-     private double generateOptimalActivation(Neuron neuron, int layer) {
-         double optimalActivation = 0;
-         for (Neuron target : layers.get(layer+1).neurons()){
-             double weight = 1;
-             for (Connection connection : target.getConnections()){
-                 if (connection.getSourceNeuron() == neuron){
-                     weight = connection.getWeight();
-                 }
-             }
-             optimalActivation += target.getOptimalActivation() / weight;
-         }
-         return optimalActivation;
-     }
+    // generate optimalActivation for a single neuron
+    private double generateOptimalActivation(Neuron neuron, int layer) {
+        double optimalActivation = 0;
+        for (Neuron target : layers.get(layer + 1).neurons()) {
+            double weight = 1;
+            for (Connection connection : target.getConnections()) {
+                if (connection.getSourceNeuron() == neuron) {
+                    weight = connection.getWeight();
+                }
+            }
+            optimalActivation += target.getOptimalActivation() / weight;
+        }
+        return optimalActivation;
+    }
 
-     private void updateOutputOptimalActivations(List<Double> optimalOutputActivations){
-         for (int i = 0; i != layers.getLast().neurons().size(); i++){
-             layers.getLast().neurons().get(i).setOptimalActivation(optimalOutputActivations.get(i));
-         }
-     }
+    // function to update the optimalActivations of the last layer
+    private void updateOutputOptimalActivations(List<Double> optimalOutputActivations) {
+        for (int i = 0; i != layers.getLast().neurons().size(); i++) {
+            layers.getLast().neurons().get(i).setOptimalActivation(optimalOutputActivations.get(i));
+        }
+    }
 
-     private void updateAllWeights(){
-         for (Layer layer : layers){
-             for (Neuron neuron : layer.neurons()){
-                 neuron.updateWeights();
-             }
-         }
-     }
+    // updates all connection-weights and biases within the network
+    private void updateAllWeightsAndBiases() {
+        for (Layer layer : layers) {
+            for (Neuron neuron : layer.neurons()) {
+                neuron.updateWeights();
+                neuron.updateBias();
+            }
+        }
+    }
 }

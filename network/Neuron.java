@@ -6,6 +6,7 @@ public class Neuron {
 
     private final List<Connection> connections; // List of all dependencies
     private double activation = 0; // the neurons current activation
+    private double bias = 0;
     private double optimalActivation = 1;
 
 
@@ -20,6 +21,7 @@ public class Neuron {
             newActivation += connection.getWeight() * connection.getSourceNeuron().getActivation();
         }
         if (!connections.isEmpty()) { // if not first layer neuron
+            newActivation += bias; // add bias to activation calc
             activation = sigmoid(newActivation);
         }
     }
@@ -35,24 +37,28 @@ public class Neuron {
 
     public void updateWeights(){
          for (Connection connection : connections){
-             double gradient = ((activation-optimalActivation) * (activation* (1- activation)) * (connection.getSourceNeuron().getActivation()));
-             connection.setWeight(connection.getWeight() - 0.1 * gradient);
+             double gradient = ((activation - optimalActivation) * (activation * (1 - activation)) * (connection.getSourceNeuron().getActivation()));
+             connection.setWeight(connection.getWeight() - Network.learningRate * gradient);
          }
-     }
+    }
 
-     public void setOptimalActivation(double optimalActivation){
-         this.optimalActivation = optimalActivation;
-     }
+    public void updateBias(){
+        bias = bias + Network.learningRate * (optimalActivation - activation);
+    }
 
-     public double getOptimalActivation(){
-         return optimalActivation;
-     }
+    public void setOptimalActivation(double optimalActivation){
+        this.optimalActivation = optimalActivation;
+    }
 
-     public List<Connection> getConnections() {
-         return connections;
-     }
+    public double getOptimalActivation(){
+        return optimalActivation;
+    }
 
-     private double sigmoid(double x){
-         return 1 / (1 + Math.exp(-x));
-     }
+    public List<Connection> getConnections() {
+        return connections;
+    }
+
+    private double sigmoid(double x){
+        return 1 / (1 + Math.exp(-x));
+    }
 }
