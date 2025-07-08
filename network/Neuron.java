@@ -5,13 +5,15 @@ import java.util.List;
 public class Neuron {
 
     private final List<Connection> connections; // List of all dependencies
+    private final double learningRate;
     private double activation = 0; // the neurons current activation
-    private double bias = 0;
-    private double optimalActivation = 1;
+    private double bias = Math.random() * 2 - 1;
+    private double delta; // used for backpropagation and gradient decent learning
 
 
-    public Neuron(List<Connection> connections){
+    public Neuron(List<Connection> connections, double learningRate){
         this.connections = connections;
+        this.learningRate = learningRate;
     }
 
     // updates the neurons current activation based on the connections
@@ -36,26 +38,26 @@ public class Neuron {
     }
 
     public void updateWeights(){
-         for (Connection connection : connections){
-             double gradient = ((activation - optimalActivation) * (activation * (1 - activation)) * (connection.getSourceNeuron().getActivation()));
-             connection.setWeight(connection.getWeight() - Network.learningRate * gradient);
-         }
+        for (Connection connection : connections) {
+            double input = connection.getSourceNeuron().getActivation();
+            double gradient = delta * input;
+            connection.setWeight(connection.getWeight() - learningRate * gradient);
+        }
     }
 
     public void updateBias(){
-        bias = bias + Network.learningRate * (optimalActivation - activation);
+        bias = bias - learningRate * delta;
     }
-
-    public void setOptimalActivation(double optimalActivation){
-        this.optimalActivation = optimalActivation;
-    }
-
-    public double getOptimalActivation(){
-        return optimalActivation;
-    }
-
     public List<Connection> getConnections() {
         return connections;
+    }
+
+    public double getDelta() {
+        return delta;
+    }
+
+    public void setDelta(double delta) {
+        this.delta = delta;
     }
 
     private double sigmoid(double x){

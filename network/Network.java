@@ -7,10 +7,11 @@ public class Network {
 
     private final List<Layer> layers = new ArrayList<>(); // the whole network in a list
 
-    public static double learningRate = 0.1;
+    private final double learningRate;
 
-    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
+    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
         // generate network
+        this.learningRate = learningRate;
         Layer inputLayer = generateLayer(inputSize, null);
         layers.add(inputLayer);
         Layer prevLayer = inputLayer;
@@ -33,7 +34,7 @@ public class Network {
         }
         List<Neuron> neurons = new ArrayList<>();
         for (int i = 0; i != size; i++){
-            neurons.add(new Neuron(connections));
+            neurons.add(new Neuron(new ArrayList<>(connections), learningRate));
         }
         return new Layer(neurons); // returns record
     }
@@ -67,43 +68,39 @@ public class Network {
     public void train(List<Double> input, List<Double> optimalOutput){
          insertInput(input);
          updateAllActivations();
-         updateOptimalActivations(optimalOutput);
+         updateOutputDeltas(optimalOutput);
+         updateHiddenDeltas();
          updateAllWeightsAndBiases();
     }
 
-    // update all optimalActivations in the network
-    private void updateOptimalActivations(List<Double> optimalOutputActivations) {
-        for (int i = layers.size() - 1; i >= 0; i--) {
-            if (i == layers.size() - 1) {
-                updateOutputOptimalActivations(optimalOutputActivations);
-            } else {
-                for (Neuron neuron : layers.get(i).neurons()) {
-                    double optimalActivation = generateOptimalActivation(neuron, i);
-                    neuron.setOptimalActivation(optimalActivation / layers.get(i + 1).neurons().size());
+    // update all deltas in the network
+    private void updateHiddenDeltas() {
+        for (int l = layers.size() - 2; l > 0; l--) { // skip output and input layer
+            for (Neuron neuron : layers.get(l).neurons()) {
+                double output = neuron.getActivation();
+                double sum = 0.0;
+                for (Neuron next : layers.get(l + 1).neurons()) {
+                    for (Connection conn : next.getConnections()) {
+                        if (conn.getSourceNeuron() == neuron) {
+                            sum += conn.getWeight() * next.getDelta();
+                        }
+                    }
                 }
+                double delta = output * (1 - output) * sum;
+                neuron.setDelta(delta);
             }
         }
     }
 
-    // generate optimalActivation for a single neuron
-    private double generateOptimalActivation(Neuron neuron, int layer) {
-        double optimalActivation = 0;
-        for (Neuron target : layers.get(layer + 1).neurons()) {
-            double weight = 1;
-            for (Connection connection : target.getConnections()) {
-                if (connection.getSourceNeuron() == neuron) {
-                    weight = connection.getWeight();
-                }
-            }
-            optimalActivation += target.getOptimalActivation() / weight;
-        }
-        return optimalActivation;
-    }
-
-    // function to update the optimalActivations of the last layer
-    private void updateOutputOptimalActivations(List<Double> optimalOutputActivations) {
-        for (int i = 0; i != layers.getLast().neurons().size(); i++) {
-            layers.getLast().neurons().get(i).setOptimalActivation(optimalOutputActivations.get(i));
+    // update all output deltas
+    private void updateOutputDeltas(List<Double> targetOutputs) {
+        List<Neuron> outputNeurons = layers.getLast().neurons();
+        for (int i = 0; i < outputNeurons.size(); i++) {
+            Neuron neuron = outputNeurons.get(i);
+            double output = neuron.getActivation();
+            double error = output - targetOutputs.get(i); // calc error
+            double delta = error * output * (1 - output); // delta learning rule
+            neuron.setDelta(delta);
         }
     }
 

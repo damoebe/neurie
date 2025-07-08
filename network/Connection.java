@@ -8,7 +8,11 @@ public class Connection {
 
     public Connection(Neuron targetNeuron) {
         Random random = new Random();
-        this.weight = (float) (random.nextInt(20) - 10) /10; // initial weight for network
+        float weight = random.nextFloat(2) - 1;
+        if (weight == 0){
+            weight = (float) 0.1;
+        }
+        this.weight =  weight;
         this.sourceNeuron = targetNeuron;
     }
 
