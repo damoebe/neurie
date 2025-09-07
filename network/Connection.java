@@ -8,7 +8,7 @@ public class Connection {
 
     public Connection(Neuron targetNeuron) {
         Random random = new Random();
-        float weight = random.nextFloat(2) - 1;
+        float weight = random.nextFloat()*4 - 2;
         if (weight == 0){
             weight = (float) 0.1;
         }

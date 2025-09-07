@@ -41,7 +41,7 @@ public class Neuron {
         for (Connection connection : connections) {
             double input = connection.getSourceNeuron().getActivation();
             double gradient = delta * input;
-            connection.setWeight(connection.getWeight() - learningRate * gradient);
+            connection.setWeight(connection.getWeight() - learningRate * gradient); // gradient
         }
     }
 
