@@ -1,4 +1,4 @@
-package network;
+package me.damoebe.network;
 
 import java.util.Random;
 
@@ -9,9 +9,6 @@ public class Connection {
     public Connection(Neuron targetNeuron) {
         Random random = new Random();
         float weight = random.nextFloat()*4 - 2;
-        if (weight == 0){
-            weight = (float) 0.1;
-        }
         this.weight =  weight;
         this.sourceNeuron = targetNeuron;
     }

@@ -1,4 +1,4 @@
-package network;
+package me.damoebe.network;
 
 import java.util.List;
 

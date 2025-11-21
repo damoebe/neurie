@@ -1,6 +1,7 @@
-package network;
+package me.damoebe.network;
 
 import java.util.List;
+import java.util.Random;
 
 public class Neuron {
 
@@ -37,11 +38,15 @@ public class Neuron {
         this.activation = activation;
     }
 
-    public void updateWeights(){
+    public void updateWeights(double loss){
         for (Connection connection : connections) {
             double input = connection.getSourceNeuron().getActivation();
             double gradient = delta * input;
-            connection.setWeight(connection.getWeight() - learningRate * gradient); // gradient
+
+            Random random = new Random();
+            double noise = (learningRate + (loss*learningRate))*(random.nextFloat()*2-1); // adjust if higher learning rate
+
+            connection.setWeight((connection.getWeight() - learningRate * gradient) + noise);
         }
     }
 

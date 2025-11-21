@@ -1,4 +1,4 @@
-package test;
+package me.damoebe.test;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -6,6 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.DefaultXYDataset;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class ChartDisplay {
     public ChartDisplay(String name, String xName, String yName, int maxArraySize){
         frame = new JFrame();
         frame.setTitle("Chart");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         dataset = new DefaultXYDataset();
 
@@ -41,6 +43,7 @@ public class ChartDisplay {
 
         frame.pack();
         frame.setLocationRelativeTo(null);
+        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
 

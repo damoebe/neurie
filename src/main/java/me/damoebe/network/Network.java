@@ -1,4 +1,4 @@
-package network;
+package me.damoebe.network;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,8 @@ public class Network {
     private final List<Layer> layers = new ArrayList<>(); // the whole network in a list
 
     private final double learningRate;
+
+    private double loss = 0;
 
     public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
         // generate network
@@ -67,11 +69,20 @@ public class Network {
 
     // uses backpropagation to update the weights with ONE set of date
     public void train(List<Double> input, List<Double> optimalOutput){
+         // forward
          insertInput(input);
          updateAllActivations();
+
+         // update network loss
+         double output = getOutput().get(0);
+         double error = output - optimalOutput.get(0);
+         this.loss = error * error;
+
+         // backward
          updateOutputDeltas(optimalOutput);
          updateHiddenDeltas();
          updateAllWeightsAndBiases();
+
     }
 
     // update all deltas in the network
@@ -109,13 +120,13 @@ public class Network {
     private void updateAllWeightsAndBiases() {
         for (Layer layer : layers) {
             for (Neuron neuron : layer.neurons()) {
-                neuron.updateWeights();
+                neuron.updateWeights(loss);
                 neuron.updateBias();
             }
         }
     }
 
-    // test
+    // test ( can be removed )
 
     private double lowestLoss = Double.MAX_VALUE;
     private double currentLoss = 0;
@@ -176,6 +187,10 @@ public class Network {
         }
 
         currentLoss = 0;
-}
+    }
+
+    public double getLoss() {
+        return this.loss;
+    }
 
 }
