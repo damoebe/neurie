@@ -73,17 +73,19 @@ public class Network {
          // forward
          insertInput(input);
          updateAllActivations();
-
-         // update network loss
-         double output = getOutput().get(0);
-         double error = output - optimalOutput.get(0);
-         this.loss = error * error;
-
+         updateLoss(optimalOutput);
          // backward
          updateOutputDeltas(optimalOutput);
          updateHiddenDeltas();
          updateAllWeightsAndBiases();
 
+    }
+
+    private void updateLoss(List<Double> optimalOutput){
+        // update network loss
+        double output = getOutput().get(0);
+        double error = output - optimalOutput.get(0);
+        this.loss = error * error;
     }
 
     // update all deltas in the network
@@ -133,30 +135,20 @@ public class Network {
 
     // test ( can be removed )
 
-    private double lowestLoss = Double.MAX_VALUE;
-    private double currentLoss = 0;
+    private double lowestLoss = 10;
     private List<Connection> connections = new ArrayList<>();
 
     public void evolutionLearning(List<Double> input, List<Double> optimalOutput){
         insertInput(input);
         updateAllActivations();
-
-        // calculating loss
-        List<Double> output = getOutput();
-
-        double error = output.get(0) - optimalOutput.get(0);
-        double loss = error * error;
-        loss /= output.size();
-
-        currentLoss += loss;
+        updateLoss(optimalOutput);
     }
 
-    public void finishEpoch(int epochSize, int epochNumber){
-        currentLoss /= epochSize;
+    public void finishEpoch(){
 
-        if (currentLoss < lowestLoss){
+        if (loss < lowestLoss){
             // save success
-            lowestLoss = currentLoss;
+            lowestLoss = loss;
             connections.clear();
             for (Layer layer: layers){
                 for (Neuron neuron: layer.neurons()){
@@ -176,24 +168,24 @@ public class Network {
                     }
                 }
             }
+        }
+        // calculating change
+        double mutationRate = 0.1*(loss);
+        Random random = new Random();
 
-            // calculating change
-            double mutationRate = Math.max(0.01, 1.0 / Math.sqrt(epochNumber+1));
-            Random random = new Random();
-
-            for (Layer layer : layers){
-                for (Neuron neuron : layer.neurons()){
-                    for (Connection connection : neuron.getConnections()){
-                        double change = (random.nextDouble() * 2 - 1) * mutationRate;
-                        connection.setWeight(connection.getWeight() + change);
-                    }
+        for (Layer layer : layers){
+            for (Neuron neuron : layer.neurons()){
+                for (Connection connection : neuron.getConnections()){
+                    double change = (random.nextDouble() * 2 - 1) * mutationRate;
+                    connection.setWeight(connection.getWeight() + change);
                 }
             }
         }
-
-        currentLoss = 0;
     }
 
+    public double getLowestLoss(){
+        return lowestLoss;
+    }
     public double getLoss() {
         return this.loss;
     }
