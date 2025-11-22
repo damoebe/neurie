@@ -11,6 +11,7 @@ public class Network {
     private final double learningRate;
 
     private double loss = 0;
+    private double noise = 1;
 
     public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
         // generate network
@@ -120,10 +121,14 @@ public class Network {
     private void updateAllWeightsAndBiases() {
         for (Layer layer : layers) {
             for (Neuron neuron : layer.neurons()) {
-                neuron.updateWeights(loss);
+                neuron.updateWeights(loss, noise);
                 neuron.updateBias();
             }
         }
+    }
+
+    public void setNoise(double noise){
+        this.noise = noise;
     }
 
     // test ( can be removed )

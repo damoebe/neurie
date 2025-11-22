@@ -38,13 +38,13 @@ public class Neuron {
         this.activation = activation;
     }
 
-    public void updateWeights(double loss){
+    public void updateWeights(double loss, double noiseRate){
         for (Connection connection : connections) {
             double input = connection.getSourceNeuron().getActivation();
             double gradient = delta * input;
 
             Random random = new Random();
-            double noise = (learningRate + (loss*learningRate))*(random.nextFloat()*2-1); // adjust if higher learning rate
+            double noise = (learningRate + (loss*learningRate))*(random.nextFloat()*2-1)*noiseRate; // adjust if higher learning rate
 
             connection.setWeight((connection.getWeight() - learningRate * gradient) + noise);
         }
