@@ -2,9 +2,9 @@ package me.damoebe;
 
 import me.damoebe.datasets.Dataset;
 import me.damoebe.datasets.DatasetReader;
-import me.damoebe.network.LearningType;
+import me.damoebe.network.DeepNetwork;
+import me.damoebe.network.EvolutionNetwork;
 import me.damoebe.network.Network;
-import me.damoebe.test.Testi;
 import me.damoebe.test.Trainer;
 
 import java.util.List;
@@ -16,22 +16,15 @@ public class Main {
 
     static void run(){
         Dataset dataset = DatasetReader.readFile(System.getProperty("user.dir") +
-                "/src/main/java/me/damoebe/datasets/data/complex.json");
+                "/src/main/java/me/damoebe/datasets/data/xor.json");
 
-        List<Network> networks = List.of(
-                new Network( 3, 1, 5, 1, 0.07),
-                new Network( 3, 1, 5, 1, 0.07),
-                new Network( 3, 1, 5, 1, 0.07)
-        );
-        int i = 0;
-        for (Network network : networks){
-            network.setNoise(0.1);
-            if (i == 1){
-                network.setNoise(0.0);
-            }
-            i++;
+        List<Network> networks = new java.util.ArrayList<>(List.of(
+                new DeepNetwork(2, 1, 3, 1, 0.1),
+                new EvolutionNetwork(2, 1, 2, 1)
+        ));
+        for (Network network : networks) {
+            network.setNoise(0.05);
         }
-
-        Trainer.train(true, networks, dataset,10000, LearningType.BACKPROPAGATION);
+        Trainer.train(true, networks, dataset, 10000);
     }
 }

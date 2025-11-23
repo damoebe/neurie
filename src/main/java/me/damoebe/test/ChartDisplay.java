@@ -88,6 +88,11 @@ public class ChartDisplay {
         // update frame
         chart = ChartFactory.createXYLineChart(name, xName, yName, dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
+
+        for (int i = 0; i != chart.getXYPlot().getSeriesCount(); i++) {
+            chartPanel.getChart().getXYPlot().getRenderer().setSeriesStroke(i, new BasicStroke(3.0f));
+        }
+
         frame.setContentPane(chartPanel);
         frame.revalidate();
         frame.repaint();
