@@ -5,27 +5,28 @@ import java.util.List;
 
 public abstract class Network {
 
-    // the whole network in a list
-    final List<Layer> layers = new ArrayList<>();
-    double loss = 0;
-    double noise = 0.1;
+    /**
+     * The whole network in a list
+     */
+    protected final List<Layer> layers = new ArrayList<>();
+    /**
+     * The current loss of the network
+     */
+    protected double loss = 0;
+    /**
+     * The configured noise of the network
+     */
+    protected double noise = 0.1;
 
-    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
-        // generate network
-        Layer inputLayer = generateLayer(inputSize, null, 0);
-        layers.add(inputLayer);
-        Layer prevLayer = inputLayer;
-        for (int i = 0; i != hiddenLayerAmount; i++){
-            Layer hiddenLayer = generateLayer(hiddenLayerSize, prevLayer, 0);
-            layers.add(hiddenLayer);
-            prevLayer = hiddenLayer;
-        }
-        Layer outputLayer = generateLayer(outputSize, prevLayer, 0);
-        layers.add(outputLayer);
-    }
 
+    /**
+     * The main constructor of a Network
+     * @param inputSize The size of the first layer
+     * @param outputSize The size of the last layer
+     * @param hiddenLayerSize The size of the hiddenlayers
+     * @param hiddenLayerAmount The amount of hiddenlayers that should be generated
+     */
     public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
-        // generate network
         Layer inputLayer = generateLayer(inputSize, null, learningRate);
         layers.add(inputLayer);
         Layer prevLayer = inputLayer;
@@ -38,7 +39,24 @@ public abstract class Network {
         layers.add(outputLayer);
     }
 
-    // generates a layer for the network
+    /**
+     * Network constructor for networks without a learning rate - 0.0 (for example evolution learning)
+     * @param inputSize The size of the first layer
+     * @param outputSize The size of the last layer
+     * @param hiddenLayerSize The size of the hiddenlayers
+     * @param hiddenLayerAmount The amount of hiddenlayers that should be generated
+     */
+    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
+        this(inputSize, outputSize, hiddenLayerSize, hiddenLayerAmount, 0);
+    }
+
+    /**
+     * Generates a new layer for the Network constructor
+     * @param size The amount of neurons that layer should contain
+     * @param prevLayer The previous Layer in the network where
+     * @param learningRate The learning Rate that will be used to construct the neurons
+     * @return A new Layer that points to the previous layer
+     */
     private Layer generateLayer(int size, Layer prevLayer, double learningRate){
         List<Connection> connections = new ArrayList<>(); // neurons from one layer have same dependencies
         if (prevLayer != null){ // if not input layer
@@ -48,12 +66,15 @@ public abstract class Network {
         }
         List<Neuron> neurons = new ArrayList<>();
         for (int i = 0; i != size; i++){
+            // clone connections list to avoid object pointing
             neurons.add(new Neuron(new ArrayList<>(connections), learningRate));
         }
         return new Layer(neurons); // returns record
     }
 
-    // updates all activations
+    /**
+     * Calls the updatedActivation() function for each neuron in the network
+     */
     public void updateAllActivations(){
         for (Layer layer : layers){
             for (Neuron neuron : layer.neurons()){
@@ -62,14 +83,20 @@ public abstract class Network {
         }
     }
 
-    // sets the input neurons activations
+    /**
+     * Inserts input activations into the network
+     * @param input A Double ArrayList containing the neuron activations.
+     */
     public void insertInput(List<Double> input){
         for (int i = 0; i != input.size(); i++){
             layers.get(0).neurons().get(i).setActivation(input.get(i));
         }
     }
 
-    // update network loss
+    /**
+     * Updates the network loss based on a targetActivation list
+     * @param optimalOutput The target activations for the current repetition
+     */
     void updateLoss(List<Double> optimalOutput){
         int i = 0;
         double totalLoss = 0;
@@ -81,7 +108,10 @@ public abstract class Network {
         loss = totalLoss / optimalOutput.size();
     }
 
-    // returns the activations of the last layer
+    /**
+     * Gets all output activations
+     * @return A Double List containing all output layer activations.
+     */
     public List<Double> getOutput(){
         List<Double> output = new ArrayList<>();
         for (Neuron neuron : layers.get(layers.size()-1).neurons()){
@@ -90,15 +120,25 @@ public abstract class Network {
         return output;
     }
 
+    /**
+     * Sets the network noise.
+     * @param noise The new noise of the network.
+     */
     public void setNoise(double noise){
         this.noise = noise;
     }
 
-    public double getLoss(){
-        return loss;
-    }
-
+    /**
+     * The abstract train function
+     * @param input The inputs for this repetition
+     * @param optimalOutput The optimalOutputs for this repetition
+     */
     public abstract void train(List<Double> input, List<Double> optimalOutput);
-    public abstract void finishEpoch();
+
+
+    /**
+     * Gets the network loss
+     * @return The network loss double
+     */
     public abstract double getNetworkLoss();
 }

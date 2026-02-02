@@ -2,6 +2,7 @@ package me.damoebe.test;
 
 import me.damoebe.datasets.Dataset;
 import me.damoebe.network.DeepNetwork;
+import me.damoebe.network.EvolutionNetwork;
 import me.damoebe.network.Network;
 
 import java.util.Arrays;
@@ -32,7 +33,9 @@ public class Trainer {
             }
 
             for (Network network : networks){
-                network.finishEpoch();
+                if (network instanceof EvolutionNetwork evolutionNetwork) {
+                    evolutionNetwork.finishEpoch();
+                }
             }
 
             if (epoch % 1000 == 0 || epoch == epochs - 1) {

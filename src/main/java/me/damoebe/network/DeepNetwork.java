@@ -5,11 +5,23 @@ import java.util.List;
 
 public class DeepNetwork extends Network{
 
+    /**
+     * Main constructor for DeepNetwork calling the super constructor
+     * @param inputSize The size of the first layer
+     * @param outputSize The size of the last layer
+     * @param hiddenLayerSize The size of the hiddenlayers
+     * @param hiddenLayerAmount The amount of hiddenlayers that should be generated
+     * @param leaningRate The learningRate that should be used for this DeepNetwork
+     */
     public DeepNetwork(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double leaningRate) {
         super(inputSize, outputSize, hiddenLayerSize, hiddenLayerAmount, leaningRate);
     }
 
-    // uses backpropagation to update the weights with ONE set of date
+    /**
+     * Trains the network with one set of data using backpropagation.
+     * @param input The inputs for this repetition
+     * @param optimalOutput The optimalOutputs for this repetition
+     */
     @Override
     public void train(List<Double> input, List<Double> optimalOutput){
          // forward
@@ -22,9 +34,6 @@ public class DeepNetwork extends Network{
          updateAllWeightsAndBiases();
 
     }
-
-    @Override
-    public void finishEpoch() {}
 
     @Override
     public double getNetworkLoss() {
@@ -70,12 +79,6 @@ public class DeepNetwork extends Network{
                 neuron.updateBias();
             }
         }
-    }
-
-
-
-    public double getLoss() {
-        return this.loss;
     }
 
 }
