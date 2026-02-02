@@ -3,6 +3,9 @@ package me.damoebe.network;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The abstract class for FFNeuralNetworks
+ */
 public abstract class Network {
 
     /**
@@ -12,11 +15,12 @@ public abstract class Network {
     /**
      * The current loss of the network
      */
-    protected double loss = 0;
+    protected double currentLoss = 0;
     /**
      * The configured noise of the network
      */
     protected double noise = 0.1;
+    protected final double learningRate ;
 
 
     /**
@@ -26,16 +30,17 @@ public abstract class Network {
      * @param hiddenLayerSize The size of the hiddenlayers
      * @param hiddenLayerAmount The amount of hiddenlayers that should be generated
      */
-    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
-        Layer inputLayer = generateLayer(inputSize, null, learningRate);
+    protected Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount, double learningRate){ // adjustable values
+        this.learningRate = learningRate;
+        Layer inputLayer = generateLayer(inputSize, null);
         layers.add(inputLayer);
         Layer prevLayer = inputLayer;
         for (int i = 0; i != hiddenLayerAmount; i++){
-            Layer hiddenLayer = generateLayer(hiddenLayerSize, prevLayer, learningRate);
+            Layer hiddenLayer = generateLayer(hiddenLayerSize, prevLayer);
             layers.add(hiddenLayer);
             prevLayer = hiddenLayer;
         }
-        Layer outputLayer = generateLayer(outputSize, prevLayer, learningRate);
+        Layer outputLayer = generateLayer(outputSize, prevLayer);
         layers.add(outputLayer);
     }
 
@@ -54,10 +59,9 @@ public abstract class Network {
      * Generates a new layer for the Network constructor
      * @param size The amount of neurons that layer should contain
      * @param prevLayer The previous Layer in the network where
-     * @param learningRate The learning Rate that will be used to construct the neurons
      * @return A new Layer that points to the previous layer
      */
-    private Layer generateLayer(int size, Layer prevLayer, double learningRate){
+    private Layer generateLayer(int size, Layer prevLayer){
         List<Connection> connections = new ArrayList<>(); // neurons from one layer have same dependencies
         if (prevLayer != null){ // if not input layer
             for (Neuron neuron : prevLayer.neurons()){
@@ -67,7 +71,7 @@ public abstract class Network {
         List<Neuron> neurons = new ArrayList<>();
         for (int i = 0; i != size; i++){
             // clone connections list to avoid object pointing
-            neurons.add(new Neuron(new ArrayList<>(connections), learningRate));
+            neurons.add(new Neuron(new ArrayList<>(connections)));
         }
         return new Layer(neurons); // returns record
     }
@@ -105,7 +109,7 @@ public abstract class Network {
             totalLoss += error * error;
             i++;
         }
-        loss = totalLoss / optimalOutput.size();
+        currentLoss = totalLoss / optimalOutput.size();
     }
 
     /**

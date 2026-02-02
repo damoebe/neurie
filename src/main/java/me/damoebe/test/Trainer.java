@@ -4,13 +4,25 @@ import me.damoebe.datasets.Dataset;
 import me.damoebe.network.DeepNetwork;
 import me.damoebe.network.EvolutionNetwork;
 import me.damoebe.network.Network;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A class containing all network training related static methods
+ */
 public class Trainer {
-    public static void train(boolean showDiagram, List<Network> networks, Dataset dataset, int epochs){
+    /**
+     * Main training method
+     * @param showDiagram whether a diagram should be shown or not
+     * @param networks list of networks that should be trained
+     * @param dataset A dataset object which is used to train the networks
+     * @param epochs The amount of epochs
+     * @param spaceBetweenPoints The space between each graphical point (only for diagram)
+     */
+    public static void train(boolean showDiagram, @NotNull List<Network> networks, @NotNull Dataset dataset, int epochs, int spaceBetweenPoints){
 
         ChartDisplay chart = null;
 
@@ -39,13 +51,13 @@ public class Trainer {
             }
 
             if (epoch % 1000 == 0 || epoch == epochs - 1) {
-                System.out.printf("Epoch %d, Loss: " + Arrays.toString(totalLosses) + "\n", epoch);
+                System.out.printf("Epoch %d, Network-Losses: " + Arrays.toString(totalLosses) + "\n", epoch);
             }
             // chart updater
             if (showDiagram) {
 
                 // chart period points distance
-                if (epoch % 100 == 0) {
+                if (epoch % spaceBetweenPoints == 0) {
 
                     for (int i = 0; i != totalLosses.length; i++) {
                         chart.update(epoch, networks.get(i).getNetworkLoss(), "network" + i);

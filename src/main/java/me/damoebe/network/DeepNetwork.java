@@ -1,8 +1,10 @@
 package me.damoebe.network;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An object class for DeepNetwork objects
+ */
 public class DeepNetwork extends Network{
 
     /**
@@ -41,7 +43,7 @@ public class DeepNetwork extends Network{
      */
     @Override
     public double getNetworkLoss() {
-        return loss;
+        return currentLoss;
     }
 
     /**
@@ -49,9 +51,10 @@ public class DeepNetwork extends Network{
      * Also this method should only be called when the updateOutputDeltas method has been called before
      */
     private void updateHiddenDeltas() {
-        for (int l = layers.size() - 2; l > 0; l--) { // skip output layer
+        for (int l = layers.size() - 2; l > 0; l--) { // skip output and input layer
             for (Neuron neuron : layers.get(l).neurons()) {
                 double output = neuron.getActivation();
+                // calculate the sum of all next deltas compared with the weight of the connection to this neuron
                 double sum = 0;
                 for (Neuron next : layers.get(l + 1).neurons()) {
                     for (Connection conn : next.getConnections()) {
@@ -87,8 +90,8 @@ public class DeepNetwork extends Network{
     private void updateAllWeightsAndBiases() {
         for (Layer layer : layers) {
             for (Neuron neuron : layer.neurons()) {
-                neuron.updateWeights(loss, noise);
-                neuron.updateBias();
+                neuron.updateWeights(currentLoss, noise, learningRate);
+                neuron.updateBias(learningRate);
             }
         }
     }

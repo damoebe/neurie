@@ -11,20 +11,44 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * A simple Chart display class
+ */
 public class ChartDisplay {
-
+    /**
+     * The JFrame of the chart
+     */
     private JFrame frame;
+    /**
+     * The data array map
+     */
     private Map<String, double[][]> dataArrayMap = new HashMap<>();
+    /**
+     * The dataset
+     */
     private DefaultXYDataset dataset;
+    /**
+     * The maximal array size
+     */
     private int maxArraySize;
+    /**
+     * JFreeChart object of the chart
+     */
     private JFreeChart chart;
-
+    /**
+     * Chart name
+     */
     private final String name;
     private final String xName;
     private final String yName;
 
-
+    /**
+     * Main constructor of the Chart class
+     * @param name The name of the chart
+     * @param xName The name of x
+     * @param yName The name of y
+     * @param maxArraySize The maximal array size
+     */
     public ChartDisplay(String name, String xName, String yName, int maxArraySize){
         frame = new JFrame();
         frame.setTitle("Chart");
@@ -47,6 +71,12 @@ public class ChartDisplay {
         frame.setVisible(true);
     }
 
+    /**
+     * Updates the Chart with a pair of data
+     * @param data1 double 1
+     * @param data2 double 2
+     * @param series The series
+     */
     public void update(double data1, double data2, String series){
 
         dataArrayMap.computeIfAbsent(series, k -> new double[2][]);

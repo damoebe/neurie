@@ -2,22 +2,28 @@ package me.damoebe.datasets;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import me.damoebe.datasets.Dataset;
 
 import java.io.FileReader;
 
+/**
+ * Contains all Dataset related static methods
+ */
 public class DatasetReader {
-    public static Dataset readFile(String path){
+    /**
+     * Loads a Dataset class from a JSON File
+     * @param path The absolute path to the File
+     * @return A Dataset object containing every set of data from the json file
+     * @throws Exception if the file can not be read
+     */
+    public static Dataset readJson(String path) throws Exception{
         Gson gson = new Gson();
-        JsonReader reader = null;
+        JsonReader reader;
 
         try {
             reader = new JsonReader(new FileReader(path));
         }catch (Exception e){
-            e.printStackTrace();
-            System.out.println("File " + path + " could not be found!");
+            throw new Exception("File " + path + " could not be found or is not a json file!");
         }
-        Dataset dataset = gson.fromJson(reader, Dataset.class);
-        return dataset;
+        return gson.fromJson(reader, Dataset.class);
     }
 }
