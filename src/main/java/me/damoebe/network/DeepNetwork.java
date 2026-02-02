@@ -35,12 +35,19 @@ public class DeepNetwork extends Network{
 
     }
 
+    /**
+     * Gets the network loss
+     * @return The network loss
+     */
     @Override
     public double getNetworkLoss() {
         return loss;
     }
 
-    // update all deltas in the network
+    /**
+     * Updates all hidden deltas in the network. Warning: The output deltas are updated in updateOutputDeltas
+     * Also this method should only be called when the updateOutputDeltas method has been called before
+     */
     private void updateHiddenDeltas() {
         for (int l = layers.size() - 2; l > 0; l--) { // skip output layer
             for (Neuron neuron : layers.get(l).neurons()) {
@@ -59,7 +66,10 @@ public class DeepNetwork extends Network{
         }
     }
 
-    // update all output deltas
+    /**
+     * Update all OUTPUT hidden delta values for each neuron
+     * @param optimalOutputs The list of all optimal outputs
+     */
     private void updateOutputDeltas(List<Double> optimalOutputs) {
         List<Neuron> outputNeurons = layers.get(layers.size()-1).neurons();
         for (int i = 0; i < outputNeurons.size(); i++) {
@@ -71,7 +81,9 @@ public class DeepNetwork extends Network{
         }
     }
 
-    // updates all connection-weights and biases within the network
+    /**
+     * Updates all weights and biases in the network
+     */
     private void updateAllWeightsAndBiases() {
         for (Layer layer : layers) {
             for (Neuron neuron : layer.neurons()) {
