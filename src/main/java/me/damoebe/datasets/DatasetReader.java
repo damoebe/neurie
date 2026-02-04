@@ -22,7 +22,7 @@ public class DatasetReader {
         try {
             reader = new JsonReader(new FileReader(path));
         }catch (Exception e){
-            throw new Exception("File " + path + " could not be found or is not a json file!");
+            throw new Exception("File " + path + " could not be found, is not a json file or isn't using the right format!");
         }
         return gson.fromJson(reader, Dataset.class);
     }

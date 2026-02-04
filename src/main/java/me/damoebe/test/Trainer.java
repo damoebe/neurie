@@ -34,14 +34,10 @@ public class Trainer {
         List<List<Double>> targets = dataset.getTargets();
 
         for (int epoch = 0; epoch < epochs; epoch++) {
-            double[] totalLosses = new double[networks.size()];
-            int i2 = 0;
             for (Network network : networks) {
                 for (int i = 0; i < inputs.size(); i++) {
                     network.train(inputs.get(i), targets.get(i));
-                    totalLosses[i2] += network.getNetworkLoss();
                 }
-                i2++;
             }
 
             for (Network network : networks){
@@ -51,7 +47,13 @@ public class Trainer {
             }
 
             if (epoch % 1000 == 0 || epoch == epochs - 1) {
-                System.out.printf("Epoch %d, Network-Losses: " + Arrays.toString(totalLosses) + "\n", epoch);
+                double[] networkLosses = new double[networks.size()];
+                int i = 0;
+                for (Network network : networks){
+                    networkLosses[i] = network.getNetworkLoss();
+                    i++;
+                }
+                System.out.printf("Epoch %d, Network-Losses: " + Arrays.toString(networkLosses) + "\n", epoch);
             }
             // chart updater
             if (showDiagram) {
@@ -59,7 +61,7 @@ public class Trainer {
                 // chart period points distance
                 if (epoch % spaceBetweenPoints == 0) {
 
-                    for (int i = 0; i != totalLosses.length; i++) {
+                    for (int i = 0; i != networks.size(); i++) {
                         chart.update(epoch, networks.get(i).getNetworkLoss(), "network" + i);
                     }
 
