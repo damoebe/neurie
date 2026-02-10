@@ -58,7 +58,7 @@ public abstract class Network {
      * @param hiddenLayerSize The size of the hiddenlayers
      * @param hiddenLayerAmount The amount of hiddenlayers that should be generated
      */
-    public Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
+    protected Network(int inputSize, int outputSize, int hiddenLayerSize, int hiddenLayerAmount){ // adjustable values
         this(inputSize, outputSize, hiddenLayerSize, hiddenLayerAmount, 0);
     }
 
@@ -108,7 +108,7 @@ public abstract class Network {
      * Updates the network loss based on a targetActivation list
      * @param optimalOutput The target activations for the current repetition
      */
-    void updateLoss(List<Double> optimalOutput){
+    public void updateLoss(List<Double> optimalOutput){
         int i = 0;
         double totalLoss = 0;
         for (double output : getOutput()){
@@ -141,15 +141,18 @@ public abstract class Network {
      * Loads the Network Object to a json file
      * @param file The file which should contain the network
      * @throws Exception If anything goes wrong
+     * @return true if the file did not exist, false if the file already existed.
      */
-    public void loadToJsonFile(File file) throws Exception{
+    public boolean loadToJsonFile(File file) throws Exception{
+        boolean fileDidNotExist;
         Gson gson = new Gson();
         try (Writer writer = new FileWriter(file.getAbsolutePath())){
-            file.createNewFile();
+            fileDidNotExist = file.createNewFile();
             gson.toJson(this, writer);
         }catch (Exception e){
             throw new Exception("The Object could not be casted to a json file at " + file.getAbsolutePath());
         }
+        return fileDidNotExist;
     }
 
     /**
