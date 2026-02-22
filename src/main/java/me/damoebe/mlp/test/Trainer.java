@@ -1,9 +1,8 @@
-package me.damoebe.test;
+package me.damoebe.mlp.test;
 
 import me.damoebe.datasets.Dataset;
-import me.damoebe.network.DeepNetwork;
-import me.damoebe.network.EvolutionNetwork;
-import me.damoebe.network.Network;
+import me.damoebe.mlp.EvolutionNetwork;
+import me.damoebe.mlp.Network;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

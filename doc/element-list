@@ -1,4 +1,4 @@
 me.damoebe
 me.damoebe.datasets
-me.damoebe.network
-me.damoebe.test
+me.damoebe.mlp
+me.damoebe.mlp.test

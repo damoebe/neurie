@@ -1,4 +1,4 @@
-package me.damoebe.test;
+package me.damoebe.mlp.test;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;

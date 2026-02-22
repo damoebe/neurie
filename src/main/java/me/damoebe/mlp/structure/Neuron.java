@@ -1,4 +1,4 @@
-package me.damoebe.network;
+package me.damoebe.mlp.structure;
 
 import java.util.List;
 import java.util.Random;

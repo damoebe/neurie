@@ -1,4 +1,8 @@
-package me.damoebe.network;
+package me.damoebe.mlp;
+
+import me.damoebe.mlp.structure.Connection;
+import me.damoebe.mlp.structure.Layer;
+import me.damoebe.mlp.structure.Neuron;
 
 import java.util.ArrayList;
 import java.util.List;

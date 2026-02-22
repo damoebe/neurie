@@ -2,10 +2,10 @@ package me.damoebe;
 
 import me.damoebe.datasets.Dataset;
 import me.damoebe.datasets.DatasetReader;
-import me.damoebe.network.DeepNetwork;
-import me.damoebe.network.EvolutionNetwork;
-import me.damoebe.network.Network;
-import me.damoebe.test.Trainer;
+import me.damoebe.mlp.DeepNetwork;
+import me.damoebe.mlp.EvolutionNetwork;
+import me.damoebe.mlp.Network;
+import me.damoebe.mlp.test.Trainer;
 
 import java.io.File;
 import java.util.List;

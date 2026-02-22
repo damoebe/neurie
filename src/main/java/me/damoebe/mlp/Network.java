@@ -1,7 +1,10 @@
-package me.damoebe.network;
+package me.damoebe.mlp;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import me.damoebe.mlp.structure.Connection;
+import me.damoebe.mlp.structure.Layer;
+import me.damoebe.mlp.structure.Neuron;
 
 import java.io.File;
 import java.io.FileReader;
@@ -65,10 +68,10 @@ public abstract class Network {
     /**
      * Generates a new layer for the Network constructor
      * @param size The amount of neurons that layer should contain
-     * @param prevLayer The previous Layer in the network where
+     * @param prevLayer The previous Layer in the network (null if there is no previous layer)
      * @return A new Layer that points to the previous layer
      */
-    private Layer generateLayer(int size, Layer prevLayer){
+    public static Layer generateLayer(int size, Layer prevLayer){
         List<Connection> connections = new ArrayList<>(); // neurons from one layer have same dependencies
         if (prevLayer != null){ // if not input layer
             for (Neuron neuron : prevLayer.neurons()){

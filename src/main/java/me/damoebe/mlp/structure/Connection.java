@@ -1,4 +1,4 @@
-package me.damoebe.network;
+package me.damoebe.mlp.structure;
 
 import java.util.Random;
 
@@ -21,8 +21,7 @@ public class Connection {
      */
     public Connection(Neuron targetNeuron) {
         // random weight initialization
-        Random random = new Random();
-        this.weight = random.nextFloat()*4 - 2;
+        this.weight = getRandomWeight();
         this.sourceNeuron = targetNeuron;
     }
 
@@ -49,4 +48,10 @@ public class Connection {
     public Neuron getSourceNeuron() {
         return sourceNeuron;
     }
+
+    public static double getRandomWeight(){
+        Random random = new Random();
+        return random.nextFloat()*4 - 2;
+    }
+
 }
