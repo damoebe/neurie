@@ -66,7 +66,7 @@ public class Head {
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @throws Exception if the inserted input embeddings don't fit the expectations
      */
-    public void insertInput(List<Embedding>[] inputEmbeddingLists) throws Exception{
+    public void insertInput(List<Embedding>... inputEmbeddingLists) throws Exception{
         if (inputEmbeddingLists.length != 1) throw new Exception("This type of head can only take one Embedding list.");
 
         if (!isValidInput(inputEmbeddingLists[0])) throw new Exception("Not a valid input Embedding list!");
@@ -145,19 +145,10 @@ public class Head {
 
     /**
      * Generates an output of this head by using the current attention, which is multiplied with the current value-vectors
-     * @return The output for the input Embeddings as an Embedding list.
+     * @return The output for the input Embeddings as a matrix.
      */
-    public List<Embedding> getOutput(){
-        double[][] outputMatrix = multiplyMatrices(values, attention);
-        List<Embedding> outputEmbeddings = new ArrayList<>();
-        for (int row = 0; row != outputMatrix.length; row++){
-            List<Double> embeddingData = new ArrayList<>();
-            for (int column = 0; column != outputMatrix[0].length; column++){
-                embeddingData.add(outputMatrix[row][column]);
-            }
-            outputEmbeddings.add(new Embedding(embeddingData));
-        }
-        return outputEmbeddings;
+    public double[][] getOutput(){
+        return multiplyMatrices(values, attention);
     }
 
     /**

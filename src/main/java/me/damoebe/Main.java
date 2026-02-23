@@ -6,6 +6,8 @@ import me.damoebe.mlp.DeepNetwork;
 import me.damoebe.mlp.EvolutionNetwork;
 import me.damoebe.mlp.Network;
 import me.damoebe.mlp.test.Trainer;
+import me.damoebe.transformer.mha.Head;
+import me.damoebe.transformer.mha.MultiHeadAttention;
 
 import java.io.File;
 import java.util.List;
@@ -15,7 +17,12 @@ import java.util.List;
  */
 public class Main {
     public static void main(String[] args) {
-        run();
+        testMHA();
+    }
+
+    static void testMHA(){
+        MultiHeadAttention<Head> mha = new MultiHeadAttention<>(Head.class, 2, 3 ,1);
+
     }
 
     static void run(){
