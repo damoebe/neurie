@@ -148,9 +148,16 @@ public class Head {
      * @return The output for the input Embeddings as an Embedding list.
      */
     public List<Embedding> getOutput(){
-        // TODO: multiply attention matrix with values vector return result
-
-        return null;
+        double[][] outputMatrix = multiplyMatrices(values, attention);
+        List<Embedding> outputEmbeddings = new ArrayList<>();
+        for (int row = 0; row != outputMatrix.length; row++){
+            List<Double> embeddingData = new ArrayList<>();
+            for (int column = 0; column != outputMatrix[0].length; column++){
+                embeddingData.add(outputMatrix[row][column]);
+            }
+            outputEmbeddings.add(new Embedding(embeddingData));
+        }
+        return outputEmbeddings;
     }
 
     /**
@@ -190,12 +197,12 @@ public class Head {
     }
 
     /**
-     *
-     * @param matrix1 
-     * @param matrix2
-     * @return
+     * Multiplies two matrices
+     * @param matrix1 The first matrix needs to have as many columns as the second matrix has rows
+     * @param matrix2 The second matrix needs to have as many rows as the first matrix has columns
+     * @return The result matrix of the multiplication
      */
-    private static double[][] multiplyMatrices(double[][] matrix1, double[][] matrix2){
+    public static double[][] multiplyMatrices(double[][] matrix1, double[][] matrix2){
         if (matrix1[0].length != matrix2.length) return null;
 
         double[][] resultMatrix = new double[matrix1.length][matrix2[0].length];
