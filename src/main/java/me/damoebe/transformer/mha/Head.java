@@ -42,15 +42,18 @@ public class Head {
      */
     protected final int inputEmbeddingAmount;
 
+    protected final boolean masked;
+
     /**
      * The main constructor of the decoder Head
      * Identical to the super constructor
      * @param inputEmbeddingAmount The amount of input embeddings
      * @param inputEmbeddingSize The size of each input embedding
      */
-    public Head(int inputEmbeddingAmount, int inputEmbeddingSize) {
+    public Head(int inputEmbeddingAmount, int inputEmbeddingSize, boolean masked) {
         this.inputEmbeddingAmount = inputEmbeddingAmount;
         this.inputEmbeddingSize = inputEmbeddingSize;
+        this.masked = masked;
 
         this.attention = new double[inputEmbeddingAmount][inputEmbeddingAmount];
         this.values = new double[inputEmbeddingAmount][inputEmbeddingSize];
@@ -82,9 +85,11 @@ public class Head {
         double[][] scaled_masked_dot_product = new double[queries.size()][keys.size()];
         for (int q = 0; q != queries.size(); q++){
             for (int k = 0; k != keys.size(); k++){
-                // triangular mask (causal mask)
-                if (k > q){
-                    scaled_masked_dot_product[q][k] = -Double.MAX_VALUE;
+                // triangular mask (causal mask) only if masked is true
+                if (masked) {
+                    if (k > q) {
+                        scaled_masked_dot_product[q][k] = -Double.MAX_VALUE;
+                    }
                 }
 
                 // calculate dot product (sum(vec*vec))
@@ -110,7 +115,7 @@ public class Head {
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @return a list of query, key and value matrices
      */
-    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddingLists){
+    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddingLists) throws Exception{
         List<List<double[]>> QKV = new ArrayList<>();
         int weightIndex = 0;
 
@@ -211,4 +216,11 @@ public class Head {
         return resultMatrix;
     }
 
+    public int getInputEmbeddingSize() {
+        return inputEmbeddingSize;
+    }
+
+    public int getInputEmbeddingAmount() {
+        return inputEmbeddingAmount;
+    }
 }

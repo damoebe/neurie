@@ -18,7 +18,7 @@ public class EDHead extends Head{
      * @param inputEmbeddingSize   The size of each input embedding
      */
     public EDHead(int inputEmbeddingAmount, int inputEmbeddingSize) {
-        super(inputEmbeddingAmount, inputEmbeddingSize);
+        super(inputEmbeddingAmount, inputEmbeddingSize, false); // no mask for decoder-encoder heads
     }
 
     /**
@@ -28,7 +28,8 @@ public class EDHead extends Head{
      * @return The query, key and value matrices which will be used to calculate the attention.
      */
     @Override
-    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddings){
+    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddings) throws Exception{
+        if (inputEmbeddings.length != 2) throw new Exception("The EDHead class has to be provided with exactly 2 inputs!");
         List<List<double[]>> QKV = new ArrayList<>();
         int weightIndex = 0;
 

@@ -31,13 +31,13 @@ public class MultiHeadAttention<H extends Head> {
      * @param inputEmbeddingAmounts The amount of the input embeddings
      * @param inputEmbeddingSize The size of the input embeddings
      */
-    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmounts, int inputEmbeddingSize)  {
+    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmounts, int inputEmbeddingSize, boolean masked)  {
         // initialize heads
         try {
-            Constructor<H> headConstructor = c.getConstructor(int.class, int.class);
+            Constructor<H> headConstructor = c.getConstructor(int.class, int.class, boolean.class);
             for (int h = 0; h != headAmount; h++) {
                 H head;
-                head = headConstructor.newInstance(inputEmbeddingAmounts, inputEmbeddingSize);
+                head = headConstructor.newInstance(inputEmbeddingAmounts, inputEmbeddingSize, masked);
                 this.heads.add(head);
             }
         }catch (Exception e){
@@ -55,10 +55,10 @@ public class MultiHeadAttention<H extends Head> {
 
     /**
      * Generates an output for a list of inputs(embedding lists).
-     * @param input An input as a list of embedding lists
+     * @param input An input as a list of embedding lists -> see EDHead doc if you are using a list size larger than 1
      * @return The output embedding list
      */
-    public List<Embedding> getOutputFor(List<Embedding>... input){
+    public List<Embedding> getOutputFor(List<Embedding>[] input){
         List<double[][]> matrices = new ArrayList<>();
         for (H head : heads){
             try {
@@ -85,7 +85,7 @@ public class MultiHeadAttention<H extends Head> {
      * @param matrices the matrices that will be concat
      * @return the merged matrix as a 2d array
      */
-    private static double[][] concatMatrices(List<double[][]> matrices){
+    public static double[][] concatMatrices(List<double[][]> matrices){
         int columns = 0;
         int rows = matrices.getFirst().length;
         for (double[][] matrix : matrices){
@@ -99,5 +99,26 @@ public class MultiHeadAttention<H extends Head> {
             }
         }
         return resultMatrix;
+    }
+
+    public MultiHeadAttention<H> clone(){
+        try {
+            //noinspection unchecked
+            return (MultiHeadAttention<H>) super.clone();
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public int getEmbeddingAmount(){
+        return this.heads.getFirst().inputEmbeddingAmount;
+    }
+
+    public int getEmbeddingSize(){
+        return this.heads.getFirst().inputEmbeddingSize;
+    }
+
+    public List<H> getHeads(){
+        return this.heads;
     }
 }

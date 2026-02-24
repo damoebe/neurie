@@ -66,6 +66,12 @@ public abstract class Network {
     }
 
     /**
+     * A method for cloning a Network object
+     * @return the cloned network object
+     */
+    public abstract Network clone();
+
+    /**
      * Generates a new layer for the Network constructor
      * @param size The amount of neurons that layer should contain
      * @param prevLayer The previous Layer in the network (null if there is no previous layer)
@@ -176,6 +182,38 @@ public abstract class Network {
      */
     public void setNoise(double noise){
         this.noise = noise;
+    }
+
+    /**
+     * A Getter for the size of the first layer's size
+     * @return The input-layer size
+     */
+    public int getInputSize(){
+        return this.layers.getFirst().neurons().size();
+    }
+
+    /**
+     * A Getter for the size of the last layer's size
+     * @return The output-layer size
+     */
+    public int getOutputSize(){
+        return this.layers.getLast().neurons().size();
+    }
+
+    /**
+     * A Getter for the size of the middle layers size
+     * @return The size of the hidden layers
+     */
+    public int getHiddenLayerSize(){
+        return this.layers.get(1).neurons().size();
+    }
+
+    /**
+     * A Getter for the amount of hidden-layers in this network
+     * @return The hidden-layer amount
+     */
+    public int getHiddenLayerAmount(){
+        return this.layers.size()-2;
     }
 
     /**

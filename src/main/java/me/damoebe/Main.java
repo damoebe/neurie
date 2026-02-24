@@ -21,7 +21,7 @@ public class Main {
     }
 
     static void testMHA(){
-        MultiHeadAttention<Head> mha = new MultiHeadAttention<>(Head.class, 2, 3 ,1);
+        MultiHeadAttention<Head> mha = new MultiHeadAttention<>(Head.class, 2, 3 ,1, false);
 
     }
 

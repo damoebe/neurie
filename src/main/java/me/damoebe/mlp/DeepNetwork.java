@@ -100,4 +100,9 @@ public class DeepNetwork extends Network{
         }
     }
 
+    @Override
+    public Network clone(){
+        return new DeepNetwork(this.getInputSize(), this.getOutputSize(), this.getHiddenLayerSize(), getHiddenLayerAmount(), learningRate);
+    }
+
 }

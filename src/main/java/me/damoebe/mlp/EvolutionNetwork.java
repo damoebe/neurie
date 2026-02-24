@@ -123,4 +123,10 @@ public class EvolutionNetwork extends Network {
     public double getNetworkLoss(){
         return this.lowestLoss;
     }
+
+    @Override
+    public Network clone(){
+        return new EvolutionNetwork(this.getInputSize(), this.getOutputSize(), this.getHiddenLayerSize(), getHiddenLayerAmount());
+    }
+
 }
