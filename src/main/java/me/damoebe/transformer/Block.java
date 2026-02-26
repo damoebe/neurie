@@ -1,6 +1,7 @@
 package me.damoebe.transformer;
 
 import me.damoebe.mlp.Network;
+import me.damoebe.transformer.mha.EDHead;
 import me.damoebe.transformer.mha.Head;
 import me.damoebe.transformer.mha.MultiHeadAttention;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,9 @@ import java.util.List;
  */
 public class Block <H extends Head, N extends Network>{
 
+    private final Normalization preMHANorm;
     private final MultiHeadAttention<H> multiHeadAttention;
+    private final Normalization preMLPNorm;
     private final List<N> multiLayerPerceptrons;
 
     /**
@@ -32,6 +35,14 @@ public class Block <H extends Head, N extends Network>{
             mlps.add(clonedMLP);
         }
 
+        if (multiHeadAttention.getHeads().getFirst() instanceof EDHead){
+            // times two because ED Heads have twice as many inputs
+            this.preMHANorm = new Normalization(multiHeadAttention.getEmbeddingAmount(), multiHeadAttention.getEmbeddingSize()*2);
+        }else {
+            this.preMHANorm = new Normalization(multiHeadAttention.getEmbeddingAmount(), multiHeadAttention.getEmbeddingSize());
+        }
+
+        this.preMLPNorm = new Normalization(multiHeadAttention.getEmbeddingAmount(), multiHeadAttention.getEmbeddingSize());
         this.multiLayerPerceptrons = mlps;
     }
 
@@ -41,26 +52,16 @@ public class Block <H extends Head, N extends Network>{
      *                        Else: [0] is the head input.
      * @return The output embeddings for this block.
      */
-    public List<Embedding> getOutputFor(List<Embedding>... inputEmbeddings){
-        List<Embedding> mhaOutput = multiHeadAttention.getOutputFor(normalize(inputEmbeddings));
-        List<Embedding> mlpOutput = new ArrayList<>();
+    public Sequence getOutputFor(Sequence... inputEmbeddings){
+        Sequence mhaOutput = multiHeadAttention.getOutputFor(preMHANorm.normalize(inputEmbeddings));
+        Sequence mlpOutput = new Sequence();
         int i = 0;
-        for (Embedding embedding : mhaOutput){
+        for (Embedding embedding : preMLPNorm.normalize(mhaOutput)[0].embeddings()){
             multiLayerPerceptrons.get(i).insertInput(embedding.data());
             multiLayerPerceptrons.get(i).updateAllActivations();
-            mlpOutput.add(new Embedding(multiLayerPerceptrons.get(i).getOutput()));
+            mlpOutput.embeddings().add(new Embedding(multiLayerPerceptrons.get(i).getOutput()));
             i++;
         }
         return mlpOutput;
-    }
-
-    /**
-     * Normalize 1 or 2 embedding
-     * @param embeddings The embedding-lists that should be normalized.
-     * @return The normalized embedding-lists
-     */
-    private List<Embedding>[] normalize(List<Embedding>[] embeddings){
-        // TODO: Normalize embeddings here
-        return null;
     }
 }

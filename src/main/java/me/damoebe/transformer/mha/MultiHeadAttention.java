@@ -2,6 +2,7 @@ package me.damoebe.transformer.mha;
 
 import me.damoebe.mlp.structure.Connection;
 import me.damoebe.transformer.Embedding;
+import me.damoebe.transformer.Sequence;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -16,13 +17,13 @@ public class MultiHeadAttention<H extends Head> {
     /**
      * A list of all heads that are contained in a MultiHeadAttention object
      */
-    private List<H> heads = new ArrayList<>();
+    private final List<H> heads = new ArrayList<>();
 
     /**
      * A weight matrix that is used to convert the concat-heads-matrix into a matrix with the dimensions of the
      * input embedding-list
      */
-    private double[][] weights;
+    private final double[][] weights;
 
     /**
      * Main constructor for the MultiHeadAttention class
@@ -58,7 +59,7 @@ public class MultiHeadAttention<H extends Head> {
      * @param input An input as a list of embedding lists -> see EDHead doc if you are using a list size larger than 1
      * @return The output embedding list
      */
-    public List<Embedding> getOutputFor(List<Embedding>[] input){
+    public Sequence getOutputFor(Sequence[] input){
         List<double[][]> matrices = new ArrayList<>();
         for (H head : heads){
             try {
@@ -68,14 +69,14 @@ public class MultiHeadAttention<H extends Head> {
             }
             matrices.add(head.getOutput());
         }
-        List<Embedding> resultEmbeddings = new ArrayList<>();
+        Sequence resultEmbeddings = new Sequence();
         double[][] outputMatrix = Head.multiplyMatrices(concatMatrices(matrices), weights);
         for (int row = 0; row != Objects.requireNonNull(outputMatrix).length; row++){
             List<Double> embeddingData = new ArrayList<>();
             for (int column = 0; column != outputMatrix[0].length; column++){
                 embeddingData.add(outputMatrix[row][column]);
             }
-            resultEmbeddings.add(new Embedding(embeddingData));
+            resultEmbeddings.embeddings().add(new Embedding(embeddingData));
         }
         return resultEmbeddings;
     }
@@ -101,6 +102,10 @@ public class MultiHeadAttention<H extends Head> {
         return resultMatrix;
     }
 
+    /**
+     * Clones a MultiHeadAttention object.
+     * @return The cloned object.
+     */
     public MultiHeadAttention<H> clone(){
         try {
             //noinspection unchecked
@@ -110,14 +115,26 @@ public class MultiHeadAttention<H extends Head> {
         }
     }
 
+    /**
+     * Getter for the used embedding amount of this MHA.
+     * @return The embedding Amount
+     */
     public int getEmbeddingAmount(){
         return this.heads.getFirst().inputEmbeddingAmount;
     }
 
+    /**
+     * Getter for the used embedding size of this MHA.
+     * @return the embedding size.
+     */
     public int getEmbeddingSize(){
         return this.heads.getFirst().inputEmbeddingSize;
     }
 
+    /**
+     * Getter for the heads stored in the MultiHeadAttention
+     * @return A list of the heads.
+     */
     public List<H> getHeads(){
         return this.heads;
     }

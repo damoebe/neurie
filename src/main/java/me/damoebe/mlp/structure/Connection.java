@@ -49,9 +49,14 @@ public class Connection {
         return sourceNeuron;
     }
 
+
     public static double getRandomWeight(){
         Random random = new Random();
         return random.nextFloat()*4 - 2;
+    }
+
+    public static double getRandomBias(){
+        return Math.random() * 2 - 1;
     }
 
 }

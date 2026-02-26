@@ -2,6 +2,7 @@ package me.damoebe.transformer.mha;
 
 import me.damoebe.mlp.structure.Connection;
 import me.damoebe.transformer.Embedding;
+import me.damoebe.transformer.Sequence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ public class Head {
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @throws Exception if the inserted input embeddings don't fit the expectations
      */
-    public void insertInput(List<Embedding>... inputEmbeddingLists) throws Exception{
+    public void insertInput(Sequence... inputEmbeddingLists) throws Exception{
         if (inputEmbeddingLists.length != 1) throw new Exception("This type of head can only take one Embedding list.");
 
         if (!isValidInput(inputEmbeddingLists[0])) throw new Exception("Not a valid input Embedding list!");
@@ -115,7 +116,7 @@ public class Head {
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @return a list of query, key and value matrices
      */
-    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddingLists) throws Exception{
+    protected List<List<double[]>> getQKVMatrices(Sequence[] inputEmbeddingLists) throws Exception{
         List<List<double[]>> QKV = new ArrayList<>();
         int weightIndex = 0;
 
@@ -123,7 +124,7 @@ public class Head {
         List<double[]> keys = new ArrayList<>();
         List<double[]> values = new ArrayList<>();
 
-        for (Embedding inputEmbedding : inputEmbeddingLists[0]){
+        for (Embedding inputEmbedding : inputEmbeddingLists[0].embeddings()){
             double[] query = new double[this.inputEmbeddingSize];
             double[] key = new double[this.inputEmbeddingSize];
             double[] value = new double[this.inputEmbeddingSize];
@@ -161,9 +162,9 @@ public class Head {
      * @param embeddings A list of the (input) embeddings that should be checked
      * @return true if the Input matches the requirements, false if the input is invalid for this head
      */
-    private boolean isValidInput(List<Embedding> embeddings){
-        if (embeddings.size() != inputEmbeddingAmount) return false;
-        for (Embedding embedding : embeddings){
+    private boolean isValidInput(Sequence embeddings){
+        if (embeddings.embeddings().size() != inputEmbeddingAmount) return false;
+        for (Embedding embedding : embeddings.embeddings()){
             if (embedding.getEmbeddingSize() != inputEmbeddingSize) return false;
         }
         return true;

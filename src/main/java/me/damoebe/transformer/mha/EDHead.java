@@ -1,6 +1,7 @@
 package me.damoebe.transformer.mha;
 
 import me.damoebe.transformer.Embedding;
+import me.damoebe.transformer.Sequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class EDHead extends Head{
      * @return The query, key and value matrices which will be used to calculate the attention.
      */
     @Override
-    protected List<List<double[]>> getQKVMatrices(List<Embedding>[] inputEmbeddings) throws Exception{
+    protected List<List<double[]>> getQKVMatrices(Sequence[] inputEmbeddings) throws Exception{
         if (inputEmbeddings.length != 2) throw new Exception("The EDHead class has to be provided with exactly 2 inputs!");
         List<List<double[]>> QKV = new ArrayList<>();
         int weightIndex = 0;
@@ -37,7 +38,7 @@ public class EDHead extends Head{
         List<double[]> keys = new ArrayList<>();
         List<double[]> values = new ArrayList<>();
 
-        for (Embedding decoderEmbedding : inputEmbeddings[0]){
+        for (Embedding decoderEmbedding : inputEmbeddings[0].embeddings()){
             double[] query = new double[this.inputEmbeddingSize];
             int i = 0;
             for (Double embeddingValue : decoderEmbedding.data()){
@@ -48,7 +49,7 @@ public class EDHead extends Head{
             queries.add(query);
         }
 
-        for (Embedding encoderEmbedding : inputEmbeddings[1]){
+        for (Embedding encoderEmbedding : inputEmbeddings[1].embeddings()){
             double[] key = new double[this.inputEmbeddingSize];
             double[] value = new double[this.inputEmbeddingSize];
             int i = 0;
