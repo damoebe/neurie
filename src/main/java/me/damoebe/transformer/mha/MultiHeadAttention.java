@@ -1,8 +1,8 @@
 package me.damoebe.transformer.mha;
 
 import me.damoebe.mlp.structure.Connection;
-import me.damoebe.transformer.Embedding;
-import me.damoebe.transformer.Sequence;
+import me.damoebe.transformer.embedding.Embedding;
+import me.damoebe.transformer.embedding.Sequence;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

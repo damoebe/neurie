@@ -1,6 +1,8 @@
 package me.damoebe.transformer;
 
 import me.damoebe.mlp.Network;
+import me.damoebe.transformer.embedding.Embedding;
+import me.damoebe.transformer.embedding.Sequence;
 import me.damoebe.transformer.mha.EDHead;
 import me.damoebe.transformer.mha.Head;
 import me.damoebe.transformer.mha.MultiHeadAttention;
@@ -16,9 +18,23 @@ import java.util.List;
  */
 public class Block <H extends Head, N extends Network>{
 
+    /**
+     * The Normalisation object used for pre MultiHeadAttention normalisation
+     */
     private final Normalization preMHANorm;
+
+    /**
+     * The MultiHeadAttention Object using H as the head type
+     */
     private final MultiHeadAttention<H> multiHeadAttention;
+    /**
+     * The Normalisation object used for pre MultiLayerPerceptron normalisation
+     */
     private final Normalization preMLPNorm;
+
+    /**
+     * The MultiLayerPerceptron objects from type N
+     */
     private final List<N> multiLayerPerceptrons;
 
     /**

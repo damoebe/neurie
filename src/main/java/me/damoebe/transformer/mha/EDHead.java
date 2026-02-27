@@ -1,7 +1,7 @@
 package me.damoebe.transformer.mha;
 
-import me.damoebe.transformer.Embedding;
-import me.damoebe.transformer.Sequence;
+import me.damoebe.transformer.embedding.Embedding;
+import me.damoebe.transformer.embedding.Sequence;
 
 import java.util.ArrayList;
 import java.util.List;

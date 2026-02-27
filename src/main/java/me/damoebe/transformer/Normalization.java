@@ -1,7 +1,8 @@
 package me.damoebe.transformer;
 
 import me.damoebe.mlp.structure.Connection;
-import org.jetbrains.annotations.NotNull;
+import me.damoebe.transformer.embedding.Embedding;
+import me.damoebe.transformer.embedding.Sequence;
 
 import java.util.ArrayList;
 
