@@ -49,7 +49,7 @@ List<Network> FFNetworks = List.of(deep, deep2, evo);
 Trainer.train(true, FFNetworks, dataset, 10000, 100);
 ```
 Running this code gets us following outputs -> Frame (final state):\
-![chart result](src/main/java/me/damoebe/mlp/test/network_types_experiment_result.png)
+![chart result](src/main/java/me/damoebe/architectures/mlp/test/network_types_experiment_result.png)
 Console Outputs:
 ```
 Epoch 0, Network-Losses: [0.25324427577526426, 0.26995350413112285, 0.4125227300881664]
