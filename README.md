@@ -36,12 +36,12 @@ try {
     throw new RuntimeException(e);
 }
 
-//Defining demo FFNetworks (all same size)
-Network deep = new DeepNetwork(3, 1, 2, 1, 0.1);
+//Defining demo networks (all same size fitting for xor-dataset)
+Network deep = new DeepNetwork(2, 1, 2, 1, 0.1);
 deep.setNoise(0);
-Network deep2 = new DeepNetwork(3, 1, 2, 1, 0.05);
+Network deep2 = new DeepNetwork(2, 1, 2, 1, 0.05);
 deep2.setNoise(0.05);
-Network evo = new EvolutionNetwork(3, 1, 2, 1);
+Network evo = new EvolutionNetwork(2, 1, 2, 1);
 evo.setNoise(0.1);
 
 // Execute training using build-in Trainer class
@@ -49,7 +49,7 @@ List<Network> FFNetworks = List.of(deep, deep2, evo);
 Trainer.train(true, FFNetworks, dataset, 10000, 100);
 ```
 Running this code gets us following outputs -> Frame (final state):\
-![chart result](src/main/java/me/damoebe/test/network_types_experiment_result.png)
+![chart result](src/main/java/me/damoebe/mlp/test/network_types_experiment_result.png)
 Console Outputs:
 ```
 Epoch 0, Network-Losses: [0.25324427577526426, 0.26995350413112285, 0.4125227300881664]
