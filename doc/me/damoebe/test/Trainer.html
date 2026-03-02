@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2026-02-02">
-<meta name="description" content="declaration: package: me.damoebe.mlp.test, class: Trainer">
+<meta name="description" content="declaration: package: me.damoebe.architectures.mlp.test, class: Trainer">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/stylesheet.css" title="Style">
@@ -80,18 +80,18 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.mlp.test</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.architectures.mlp.test</a></div>
 <h1 title="Klasse Trainer" class="title">Klasse Trainer</h1>
 </div>
 <div class="inheritance" title="Vererbungsbaum"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">me.damoebe.mlp.test.Trainer</div>
+<div class="inheritance">me.damoebe.architectures.mlp.test.Trainer</div>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Trainer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">Object</a></span></div>
-<div class="block">A class containing all network training related static methods</div>
+<div class="block">A class containing all FFNetwork training related static methods</div>
 </div>
 </section>
 <section class="summary">
@@ -122,7 +122,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Beschreibung</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#train(boolean,java.util.List,me.damoebe.datasets.Dataset,int,int)" class="member-name-link">train</a><wbr>(boolean&nbsp;showDiagram,
- @NotNull <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="../network/Network.html" title="Klasse in me.damoebe.mlp">Network</a>&gt;&nbsp;networks,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="../FFNetwork/Network.html" title="Klasse in me.damoebe.architectures.mlp">Network</a>&gt;&nbsp;FFNetworks,
  @NotNull <a href="../datasets/Dataset.html" title="Klasse in me.damoebe.datasets">Dataset</a>&nbsp;dataset,
  int&nbsp;epochs,
  int&nbsp;spaceBetweenPoints)</code></div>
@@ -168,7 +168,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">train</span><wbr><span class="parameters">(boolean&nbsp;showDiagram,
  @NotNull
- @NotNull <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="../network/Network.html" title="Klasse in me.damoebe.mlp">Network</a>&gt;&nbsp;networks,
+ @NotNull <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="../FFNetwork/Network.html" title="Klasse in me.damoebe.architectures.mlp">Network</a>&gt;&nbsp;FFNetworks,
  @NotNull
  @NotNull <a href="../datasets/Dataset.html" title="Klasse in me.damoebe.datasets">Dataset</a>&nbsp;dataset,
  int&nbsp;epochs,
@@ -177,8 +177,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameter:</dt>
 <dd><code>showDiagram</code> - whether a diagram should be shown or not</dd>
-<dd><code>networks</code> - list of networks that should be trained</dd>
-<dd><code>dataset</code> - A dataset object which is used to train the networks</dd>
+<dd><code>FFNetworks</code> - list of FFNetworks that should be trained</dd>
+<dd><code>dataset</code> - A dataset object which is used to train the FFNetworks</dd>
 <dd><code>epochs</code> - The amount of epochs</dd>
 <dd><code>spaceBetweenPoints</code> - The space between each graphical point (only for diagram)</dd>
 </dl>

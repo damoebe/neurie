@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2026-02-02">
-<meta name="description" content="declaration: package: me.damoebe.mlp, class: Neuron">
+<meta name="description" content="declaration: package: me.damoebe.architectures.mlp, class: Neuron">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/stylesheet.css" title="Style">
@@ -80,11 +80,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.mlp</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.architectures.mlp</a></div>
 <h1 title="Klasse Neuron" class="title">Klasse Neuron</h1>
 </div>
 <div class="inheritance" title="Vererbungsbaum"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">me.damoebe.mlp.structure.Neuron</div>
+<div class="inheritance">me.damoebe.architectures.mlp.structure.Neuron</div>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
@@ -104,7 +104,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Konstruktor</div>
 <div class="table-header col-last">Beschreibung</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.List)" class="member-name-link">Neuron</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.mlp">Connection</a>&gt;&nbsp;connections)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.List)" class="member-name-link">Neuron</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.architectures.mlp">Connection</a>&gt;&nbsp;connections)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Main constructor of the Neuron class</div>
 </div>
@@ -127,7 +127,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Getter for current Activation</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a><wbr>&lt;<a href="Connection.html" title="Klasse in me.damoebe.mlp">Connection</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a><wbr>&lt;<a href="Connection.html" title="Klasse in me.damoebe.architectures.mlp">Connection</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConnections()" class="member-name-link">getConnections</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Getter for connections</div>
@@ -185,7 +185,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="&lt;init&gt;(java.util.List)">
 <h3>Neuron</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Neuron</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.mlp">Connection</a>&gt;&nbsp;connections)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Neuron</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.architectures.mlp">Connection</a>&gt;&nbsp;connections)</span></div>
 <div class="block">Main constructor of the Neuron class</div>
 <dl class="notes">
 <dt>Parameter:</dt>
@@ -247,7 +247,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Updates all connection weights based on delta value, loss, noise and learningRate</div>
 <dl class="notes">
 <dt>Parameter:</dt>
-<dd><code>loss</code> - The network loss</dd>
+<dd><code>loss</code> - The FFNetwork loss</dd>
 <dd><code>noiseRate</code> - The noiseRate for the randomizer</dd>
 <dd><code>learningRate</code> - The learning Rate which is used to update the weights</dd>
 </dl>
@@ -262,7 +262,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Updates the bias using learningRate and delta</div>
 <dl class="notes">
 <dt>Parameter:</dt>
-<dd><code>learningRate</code> - The learningRate of the network</dd>
+<dd><code>learningRate</code> - The learningRate of the FFNetwork</dd>
 </dl>
 </div>
 </section>
@@ -271,7 +271,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getConnections()">
 <h3>getConnections</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.mlp">Connection</a>&gt;</span>&nbsp;<span class="element-name">getConnections</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Connection.html" title="Klasse in me.damoebe.architectures.mlp">Connection</a>&gt;</span>&nbsp;<span class="element-name">getConnections</span>()</div>
 <div class="block">Getter for connections</div>
 <dl class="notes">
 <dt>Gibt zurück:</dt>

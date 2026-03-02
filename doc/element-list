@@ -1,4 +1,9 @@
 me.damoebe
+me.damoebe.architectures
+me.damoebe.architectures.mlp
+me.damoebe.architectures.mlp.structure
+me.damoebe.architectures.mlp.test
+me.damoebe.architectures.transformer
+me.damoebe.architectures.transformer.embedding
+me.damoebe.architectures.transformer.mha
 me.damoebe.datasets
-me.damoebe.mlp
-me.damoebe.mlp.test

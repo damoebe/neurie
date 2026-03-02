@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="dc.created" content="2026-02-02">
-<meta name="description" content="declaration: package: me.damoebe.mlp, class: Network">
+<meta name="description" content="declaration: package: me.damoebe.architectures.mlp, class: Network">
 <meta name="generator" content="javadoc/ClassWriter">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../resource-files/stylesheet.css" title="Style">
@@ -80,17 +80,17 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.mlp</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">me.damoebe.architectures.mlp</a></div>
 <h1 title="Klasse Network" class="title">Klasse Network</h1>
 </div>
 <div class="inheritance" title="Vererbungsbaum"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">me.damoebe.mlp.Network</div>
+<div class="inheritance">me.damoebe.architectures.mlp.FFNetwork</div>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
 <dl class="notes">
 <dt>Bekannte direkte Unterklassen:</dt>
-<dd><code><a href="DeepNetwork.html" title="Klasse in me.damoebe.mlp">DeepNetwork</a></code>, <code><a href="EvolutionNetwork.html" title="Klasse in me.damoebe.mlp">EvolutionNetwork</a></code></dd>
+<dd><code><a href="DeepNetwork.html" title="Klasse in me.damoebe.architectures.mlp">DeepNetwork</a></code>, <code><a href="EvolutionNetwork.html" title="Klasse in me.damoebe.architectures.mlp">EvolutionNetwork</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">Network</span>
@@ -112,12 +112,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>protected double</code></div>
 <div class="col-second even-row-color"><code><a href="#currentLoss" class="member-name-link">currentLoss</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The current loss of the network</div>
+<div class="block">The current loss of the FFNetwork</div>
 </div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a><wbr>&lt;<a href="Layer.html" title="Klasse in me.damoebe.mlp">Layer</a>&gt;</code></div>
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a><wbr>&lt;<a href="Layer.html" title="Klasse in me.damoebe.architectures.mlp">Layer</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#layers" class="member-name-link">layers</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The whole network in a list</div>
+<div class="block">The whole FFNetwork in a list</div>
 </div>
 <div class="col-first even-row-color"><code>protected final double</code></div>
 <div class="col-second even-row-color"><code><a href="#learningRate" class="member-name-link">learningRate</a></code></div>
@@ -125,7 +125,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>protected double</code></div>
 <div class="col-second odd-row-color"><code><a href="#noise" class="member-name-link">noise</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The configured noise of the network</div>
+<div class="block">The configured noise of the FFNetwork</div>
 </div>
 </div>
 </section>
@@ -145,7 +145,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;hiddenLayerSize,
  int&nbsp;hiddenLayerAmount)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Network constructor for networks without a learning rate - 0.0 (for example evolution learning)</div>
+<div class="block">Network constructor for FFNetworks without a learning rate - 0.0 (for example evolution learning)</div>
 </div>
 <div class="col-first odd-row-color"><code>protected </code></div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(int,int,int,int,double)" class="member-name-link">Network</a><wbr>(int&nbsp;inputSize,
@@ -173,7 +173,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getNetworkLoss()" class="member-name-link">getNetworkLoss</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the network loss</div>
+<div class="block">Gets the FFNetwork loss</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Double.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">Double</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOutput()" class="member-name-link">getOutput</a>()</code></div>
@@ -183,12 +183,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#insertInput(java.util.List)" class="member-name-link">insertInput</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Double.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">Double</a>&gt;&nbsp;input)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Inserts input activations into the network</div>
+<div class="block">Inserts input activations into the FFNetwork</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setNoise(double)" class="member-name-link">setNoise</a><wbr>(double&nbsp;noise)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the network noise.</div>
+<div class="block">Sets the FFNetwork noise.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#train(java.util.List,java.util.List)" class="member-name-link">train</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Double.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">Double</a>&gt;&nbsp;input,
@@ -199,7 +199,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateAllActivations()" class="member-name-link">updateAllActivations</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Calls the updatedActivation() function for each neuron in the network</div>
+<div class="block">Calls the updatedActivation() function for each neuron in the FFNetwork</div>
 </div>
 </div>
 </div>
@@ -222,8 +222,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="layers">
 <h3>layers</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Layer.html" title="Klasse in me.damoebe.mlp">Layer</a>&gt;</span>&nbsp;<span class="element-name">layers</span></div>
-<div class="block">The whole network in a list</div>
+<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="Layer.html" title="Klasse in me.damoebe.architectures.mlp">Layer</a>&gt;</span>&nbsp;<span class="element-name">layers</span></div>
+<div class="block">The whole FFNetwork in a list</div>
 </div>
 </section>
 </li>
@@ -232,7 +232,7 @@ loadScripts(document, 'script');</script>
 <h3>currentLoss</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">currentLoss</span></div>
-<div class="block">The current loss of the network</div>
+<div class="block">The current loss of the FFNetwork</div>
 </div>
 </section>
 </li>
@@ -241,7 +241,7 @@ loadScripts(document, 'script');</script>
 <h3>noise</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">noise</span></div>
-<div class="block">The configured noise of the network</div>
+<div class="block">The configured noise of the FFNetwork</div>
 </div>
 </section>
 </li>
@@ -289,7 +289,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;outputSize,
  int&nbsp;hiddenLayerSize,
  int&nbsp;hiddenLayerAmount)</span></div>
-<div class="block">Network constructor for networks without a learning rate - 0.0 (for example evolution learning)</div>
+<div class="block">Network constructor for FFNetworks without a learning rate - 0.0 (for example evolution learning)</div>
 <dl class="notes">
 <dt>Parameter:</dt>
 <dd><code>inputSize</code> - The size of the first layer</dd>
@@ -313,7 +313,7 @@ loadScripts(document, 'script');</script>
 <h3>updateAllActivations</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateAllActivations</span>()</div>
-<div class="block">Calls the updatedActivation() function for each neuron in the network</div>
+<div class="block">Calls the updatedActivation() function for each neuron in the FFNetwork</div>
 </div>
 </section>
 </li>
@@ -322,7 +322,7 @@ loadScripts(document, 'script');</script>
 <h3>insertInput</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">insertInput</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="Klasse oder Schnittstelle in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Double.html" title="Klasse oder Schnittstelle in java.lang" class="external-link">Double</a>&gt;&nbsp;input)</span></div>
-<div class="block">Inserts input activations into the network</div>
+<div class="block">Inserts input activations into the FFNetwork</div>
 <dl class="notes">
 <dt>Parameter:</dt>
 <dd><code>input</code> - A Double ArrayList containing the neuron activations.</dd>
@@ -348,10 +348,10 @@ loadScripts(document, 'script');</script>
 <h3>setNoise</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setNoise</span><wbr><span class="parameters">(double&nbsp;noise)</span></div>
-<div class="block">Sets the network noise.</div>
+<div class="block">Sets the FFNetwork noise.</div>
 <dl class="notes">
 <dt>Parameter:</dt>
-<dd><code>noise</code> - The new noise of the network.</dd>
+<dd><code>noise</code> - The new noise of the FFNetwork.</dd>
 </dl>
 </div>
 </section>
@@ -376,10 +376,10 @@ loadScripts(document, 'script');</script>
 <h3>getNetworkLoss</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getNetworkLoss</span>()</div>
-<div class="block">Gets the network loss</div>
+<div class="block">Gets the FFNetwork loss</div>
 <dl class="notes">
 <dt>Gibt zurück:</dt>
-<dd>The network loss double</dd>
+<dd>The FFNetwork loss double</dd>
 </dl>
 </div>
 </section>
