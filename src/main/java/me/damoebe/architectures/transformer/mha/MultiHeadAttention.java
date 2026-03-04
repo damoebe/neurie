@@ -127,8 +127,7 @@ public class MultiHeadAttention<H extends Head> {
      * @param deltas The first hidden-layer deltas of the block's mlp
      */
     public void updateAllWeights(double[][] deltas){
-        updateWeights(deltas);
-        List<double[][]> headDeltas = generateHeadDeltas(deltas);
+        List<double[][]> headDeltas = generateHeadDeltas(updateWeights(deltas));
         for (int headIndex = 0; headIndex != heads.size(); headIndex++){
             heads.get(headIndex).updateQKVWeights(headDeltas.get(headIndex));
         }
@@ -137,8 +136,9 @@ public class MultiHeadAttention<H extends Head> {
     /**
      * Updates the weights in the MultiHeadAttention class
      * @param deltas The first hidden-layer deltas of the block's mlp
+     * @return A new delta matrix used for head delta calculation
      */
-    private void updateWeights(double[][] deltas){
+    private double[][] updateWeights(double[][] deltas){
         // calculate deltas for mha weights
         double[][] concatHeadOutputs = concatMatrices(currentHeadOutputs);
         double[][] mhaDeltas = new double[heads.getFirst().inputEmbeddingSize][heads.getFirst().inputEmbeddingSize*
@@ -159,10 +159,12 @@ public class MultiHeadAttention<H extends Head> {
                 weights[weightRow][weightColumn] -= learningRate * mhaDeltas[weightRow][weightColumn];
             }
         }
+        return mhaDeltas;
     }
 
     private List<double[][]> generateHeadDeltas(double[][] deltas){
         // TODO: generate head deltas
+
         return null;
     }
 
