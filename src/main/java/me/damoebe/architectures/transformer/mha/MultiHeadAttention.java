@@ -13,7 +13,7 @@ import java.util.Objects;
  * A container class for Heads
  * @param <H> The type of head that is used stored in the class
  */
-public class MultiHeadAttention<H extends Head> {
+public class MultiHeadAttention<H extends Head> implements Cloneable{
     /**
      * A list of all heads that are contained in a MultiHeadAttention object
      */
@@ -35,10 +35,10 @@ public class MultiHeadAttention<H extends Head> {
      * Main constructor for the MultiHeadAttention class
      * @param c The class that is being used for the heads
      * @param headAmount The amount of heads this MHA object should have
-     * @param inputEmbeddingAmounts The amount of the input embeddings
+     * @param inputEmbeddingAmount The amount of the input embeddings
      * @param inputEmbeddingSize The size of the input embeddings
      */
-    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmounts, int inputEmbeddingSize, boolean masked)  {
+    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmount, int inputEmbeddingSize, boolean masked)  {
         // TODO: parameterize learning rate and update constructor usages
         this.learningRate = 0;
         // initialize heads
@@ -46,7 +46,7 @@ public class MultiHeadAttention<H extends Head> {
             Constructor<H> headConstructor = c.getConstructor(int.class, int.class, boolean.class);
             for (int h = 0; h != headAmount; h++) {
                 H head;
-                head = headConstructor.newInstance(inputEmbeddingAmounts, inputEmbeddingSize, masked);
+                head = headConstructor.newInstance((inputEmbeddingAmount/headAmount), inputEmbeddingSize, masked);
                 this.heads.add(head);
             }
         }catch (Exception e){
@@ -54,9 +54,9 @@ public class MultiHeadAttention<H extends Head> {
         }
 
         // initialize weights ()
-        this.weights = new double[heads.getFirst().inputEmbeddingAmount][heads.getFirst().inputEmbeddingSize];
-        for (int row = 0; row != heads.getFirst().inputEmbeddingAmount; row++){
-            for (int column = 0; column != heads.getFirst().inputEmbeddingSize; column++){
+        this.weights = new double[inputEmbeddingSize][inputEmbeddingAmount];
+        for (int row = 0; row != inputEmbeddingSize; row++){
+            for (int column = 0; column != inputEmbeddingAmount; column++){
                 weights[row][column] = Connection.getRandomWeight();
             }
         }
@@ -84,19 +84,25 @@ public class MultiHeadAttention<H extends Head> {
     }
 
     /**
-     * Inserts an input in all heads and gets their outputs
+     * Splits the input into subsequences and inserts them in all heads. It also gets their outputs.
      * @param input The input Sequences for this mha
      * @return All output matrices in a list
      */
     private List<double[][]> getHeadOutputMatrices(Sequence[] input){
         List<double[][]> matrices = new ArrayList<>();
+        int subSequence = 0;
         for (H head : heads){
             try {
-                head.insertInput(input);
+                Sequence[] headInput = new Sequence[input.length];
+                for (int s = 0; s != input.length; s++){
+                    headInput[s] = input[s].getSubSequences(heads.size()).get(subSequence);
+                }
+                head.insertInput(headInput);
             }catch (Exception e){
                 throw new RuntimeException(e.getMessage());
             }
             matrices.add(head.getOutput());
+            subSequence++;
         }
         return matrices;
     }
@@ -107,19 +113,25 @@ public class MultiHeadAttention<H extends Head> {
      * @return the merged matrix as a 2d array
      */
     public static double[][] concatMatrices(List<double[][]> matrices){
-        int columns = 0;
         int rows = matrices.getFirst().length;
+        int columns = 0;
+
         for (double[][] matrix : matrices){
             columns += matrix[0].length;
         }
-        double[][] resultMatrix = new double[rows][columns];
-        int total_row = 0;
+
+        double[][] result = new double[rows][columns];
+
+        int columnOffset = 0;
+
         for (double[][] matrix : matrices){
-            for(int row = 0; row != matrix.length; row++){
-                System.arraycopy(matrix[row], 0, resultMatrix[total_row], 0, matrix[0].length);
+            for(int row = 0; row < rows; row++){
+                System.arraycopy(matrix[row], 0, result[row], columnOffset, matrix[0].length);
             }
+            columnOffset += matrix[0].length;
         }
-        return resultMatrix;
+
+        return result;
     }
 
     /**
@@ -127,7 +139,8 @@ public class MultiHeadAttention<H extends Head> {
      * @param deltas The first hidden-layer deltas of the block's mlp
      */
     public void updateAllWeights(double[][] deltas){
-        List<double[][]> headDeltas = generateHeadDeltas(updateWeights(deltas));
+        updateWeights(deltas);
+        List<double[][]> headDeltas = generateHeadDeltas(deltas);
         for (int headIndex = 0; headIndex != heads.size(); headIndex++){
             heads.get(headIndex).updateQKVWeights(headDeltas.get(headIndex));
         }
@@ -135,37 +148,44 @@ public class MultiHeadAttention<H extends Head> {
 
     /**
      * Updates the weights in the MultiHeadAttention class
-     * @param deltas The first hidden-layer deltas of the block's mlp
-     * @return A new delta matrix used for head delta calculation
+     * @param deltas The deltas that are being inserted into this mha sub-layer (They must have horizontal sequence
+     *               dimensions, like the weights)
      */
-    private double[][] updateWeights(double[][] deltas){
+    private void updateWeights(double[][] deltas){
+        if ((deltas.length != weights.length) && (deltas[0].length != weights[0].length)) return;
         // calculate deltas for mha weights
         double[][] concatHeadOutputs = concatMatrices(currentHeadOutputs);
-        double[][] mhaDeltas = new double[heads.getFirst().inputEmbeddingSize][heads.getFirst().inputEmbeddingSize*
-                heads.getFirst().inputEmbeddingAmount];
-        for (int outputRow = 0; outputRow != concatHeadOutputs.length; outputRow++){
-            for (int outputColumn = 0; outputColumn != concatHeadOutputs[0].length; outputColumn++){
-                double sum = 0;
-                for (int deltaRow = 0; deltaRow != deltas.length; deltaRow++){
-                    sum += concatHeadOutputs[deltaRow][outputColumn] * deltas[deltaRow][outputRow];
-                }
-                mhaDeltas[outputRow][outputColumn] = sum;
-            }
-        }
-
+        double[][] mhaDeltas = Head.multiplyMatrices(concatHeadOutputs, deltas);
         // update mha weights based on mhaDeltas
         for (int weightRow = 0; weightRow != weights.length; weightRow++){
             for (int weightColumn = 0; weightColumn != weights[0].length; weightColumn++){
+                assert mhaDeltas != null;
                 weights[weightRow][weightColumn] -= learningRate * mhaDeltas[weightRow][weightColumn];
             }
         }
-        return mhaDeltas;
     }
 
+    /**
+     * Generates a list of head deltas that are passed into the heads at backpropagation
+     * @param deltas The deltas of the next sub layer
+     * @return The list containing the head deltas as matrices
+     */
     private List<double[][]> generateHeadDeltas(double[][] deltas){
-        // TODO: generate head deltas
-
-        return null;
+        if (deltas == null) return null;
+        List<double[][]> headDeltaMatrices = new ArrayList<>();
+        double[][] concatHeadDeltas = Head.multiplyMatrices(weights, deltas);
+        for (int headIndex = 0; headIndex != heads.size(); headIndex++){
+            double[][] headDeltas = new double[heads.getFirst().inputEmbeddingAmount][heads.getFirst().inputEmbeddingSize];
+            for (int headEmbedding = 0; headEmbedding != heads.getFirst().inputEmbeddingAmount; headEmbedding++){
+                for (int embeddingData = 0; embeddingData != heads.getFirst().inputEmbeddingSize; embeddingData++){
+                    assert concatHeadDeltas != null;
+                    headDeltas[headEmbedding][embeddingData] = concatHeadDeltas[embeddingData][headIndex*heads.getFirst().inputEmbeddingAmount +
+                            headEmbedding];
+                }
+            }
+            headDeltaMatrices.add(headDeltas);
+        }
+        return headDeltaMatrices;
     }
 
     /**
