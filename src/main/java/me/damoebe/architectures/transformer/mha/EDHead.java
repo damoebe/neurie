@@ -1,10 +1,11 @@
 package me.damoebe.architectures.transformer.mha;
 
-import me.damoebe.architectures.transformer.embedding.Embedding;
+import me.damoebe.architectures.transformer.embedding.Matrix;
 import me.damoebe.architectures.transformer.embedding.Sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Encoder-Decoder Head class
@@ -29,46 +30,36 @@ public class EDHead extends Head{
      * @return The query, key and value matrices which will be used to calculate the attention.
      */
     @Override
-    protected List<List<double[]>> generateQKVMatrices(Sequence[] inputEmbeddings) throws Exception{
+    protected List<double[][]> generateQKVMatrices(Sequence[] inputEmbeddings) throws Exception{
         if (inputEmbeddings.length != 2) throw new Exception("The EDHead class has to be provided with exactly 2 inputs!");
-        List<List<double[]>> QKV = new ArrayList<>();
-        int weightIndex = 0;
+        List<double[][]> QKV = new ArrayList<>();
 
-        List<double[]> queries = new ArrayList<>();
-        List<double[]> keys = new ArrayList<>();
-        List<double[]> values = new ArrayList<>();
+        // bad performance fix in future
+        // queries come from decoder, keys and values from encoder
+        double[][] queries = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddings[0].getVerticalMatrix(), weights.getFirst())),
+                biases.getFirst()
+        );
 
-        for (Embedding decoderEmbedding : inputEmbeddings[0].embeddings()){
-            double[] query = new double[this.inputEmbeddingSize];
-            int i = 0;
-            for (Double embeddingValue : decoderEmbedding.data()){
-                query[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
-                i++;
-            }
-            queries.add(query);
-        }
+        double[][] keys = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddings[1].getVerticalMatrix(), weights.get(1))),
+                biases.get(1)
+        );
 
-        for (Embedding encoderEmbedding : inputEmbeddings[1].embeddings()){
-            double[] key = new double[this.inputEmbeddingSize];
-            double[] value = new double[this.inputEmbeddingSize];
-            int i = 0;
-            for (Double embeddingValue : encoderEmbedding.data()){
-                key[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
+        double[][] values = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddings[1].getVerticalMatrix(), weights.getLast())),
+                biases.getLast()
+        );
 
-                value[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
+        assert queries != null && keys != null && values != null;
 
-                i++;
-            }
-            keys.add(key);
-            values.add(value);
-        }
+        double[][] verticalQueries = Matrix.transpose(queries);
+        double[][] verticalKeys = Matrix.transpose(keys);
+        double[][] verticalValues = Matrix.transpose(values);
 
-        QKV.add(queries);
-        QKV.add(keys);
-        QKV.add(values);
+        QKV.add(verticalQueries);
+        QKV.add(verticalKeys);
+        QKV.add(verticalValues);
 
         return QKV;
     }

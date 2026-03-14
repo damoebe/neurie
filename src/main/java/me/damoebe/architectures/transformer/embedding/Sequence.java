@@ -62,13 +62,7 @@ public class Sequence {
      * @return The horizontal Matrix
      */
     public double[][] getHorizontalMatrix(){
-        double[][] horizontalMatrix = new double[embeddings.getFirst().getEmbeddingSize()][embeddings.size()];
-        for (int embeddingIndex = 0; embeddingIndex != embeddings.size(); embeddingIndex++){
-            for (int dataIndex = 0; dataIndex != embeddings.getFirst().getEmbeddingSize(); dataIndex++){
-                horizontalMatrix[dataIndex][embeddingIndex] = embeddings.get(embeddingIndex).data().get(dataIndex);
-            }
-        }
-        return horizontalMatrix;
+        return Matrix.transpose(getVerticalMatrix());
     }
 
     /**

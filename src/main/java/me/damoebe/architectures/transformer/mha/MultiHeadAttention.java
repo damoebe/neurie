@@ -2,6 +2,7 @@ package me.damoebe.architectures.transformer.mha;
 
 import me.damoebe.architectures.mlp.structure.Connection;
 import me.damoebe.architectures.transformer.embedding.Embedding;
+import me.damoebe.architectures.transformer.embedding.Matrix;
 import me.damoebe.architectures.transformer.embedding.Sequence;
 
 import java.lang.reflect.Constructor;
@@ -38,9 +39,8 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
      * @param inputEmbeddingAmount The amount of the input embeddings
      * @param inputEmbeddingSize The size of the input embeddings
      */
-    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmount, int inputEmbeddingSize, boolean masked)  {
-        // TODO: parameterize learning rate and update constructor usages
-        this.learningRate = 0;
+    public MultiHeadAttention(Class<H> c, int headAmount, int inputEmbeddingAmount, int inputEmbeddingSize, boolean masked, double learningRate)  {
+        this.learningRate = learningRate;
         // initialize heads
         try {
             Constructor<H> headConstructor = c.getConstructor(int.class, int.class, boolean.class);
@@ -71,7 +71,7 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
         List<double[][]> matrices = getHeadOutputMatrices(input);
         this.currentHeadOutputs = matrices;
         Sequence resultEmbeddings = new Sequence();
-        double[][] outputMatrix = Head.multiplyMatrices(concatMatrices(matrices), weights);
+        double[][] outputMatrix = Matrix.multiply(concatMatrices(matrices), weights);
         for (int row = 0; row != Objects.requireNonNull(outputMatrix).length; row++){
             List<Double> embeddingData = new ArrayList<>();
             for (int column = 0; column != outputMatrix[0].length; column++){
@@ -142,7 +142,7 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
         updateWeights(deltas);
         List<double[][]> headDeltas = generateHeadDeltas(deltas);
         for (int headIndex = 0; headIndex != heads.size(); headIndex++){
-            heads.get(headIndex).updateQKVWeights(headDeltas.get(headIndex));
+            heads.get(headIndex).updateQKVWeights(headDeltas.get(headIndex), learningRate);
         }
     }
 
@@ -155,7 +155,7 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
         if ((deltas.length != weights.length) && (deltas[0].length != weights[0].length)) return;
         // calculate deltas for mha weights
         double[][] concatHeadOutputs = concatMatrices(currentHeadOutputs);
-        double[][] mhaDeltas = Head.multiplyMatrices(concatHeadOutputs, deltas);
+        double[][] mhaDeltas = Matrix.multiply(concatHeadOutputs, deltas);
         // update mha weights based on mhaDeltas
         for (int weightRow = 0; weightRow != weights.length; weightRow++){
             for (int weightColumn = 0; weightColumn != weights[0].length; weightColumn++){
@@ -173,7 +173,7 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
     private List<double[][]> generateHeadDeltas(double[][] deltas){
         if (deltas == null) return null;
         List<double[][]> headDeltaMatrices = new ArrayList<>();
-        double[][] concatHeadDeltas = Head.multiplyMatrices(weights, deltas);
+        double[][] concatHeadDeltas = Matrix.multiply(weights, deltas);
         for (int headIndex = 0; headIndex != heads.size(); headIndex++){
             double[][] headDeltas = new double[heads.getFirst().inputEmbeddingAmount][heads.getFirst().inputEmbeddingSize];
             for (int headEmbedding = 0; headEmbedding != heads.getFirst().inputEmbeddingAmount; headEmbedding++){

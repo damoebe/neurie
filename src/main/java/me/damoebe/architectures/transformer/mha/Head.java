@@ -2,11 +2,13 @@ package me.damoebe.architectures.transformer.mha;
 
 import me.damoebe.architectures.mlp.structure.Connection;
 import me.damoebe.architectures.transformer.embedding.Embedding;
+import me.damoebe.architectures.transformer.embedding.Matrix;
 import me.damoebe.architectures.transformer.embedding.Sequence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Decoder and Encoder Head Object class
@@ -17,13 +19,13 @@ public class Head {
      * All weights of the head in one list, (size = inputEmbeddingSize*inputEmbeddingAmount*3) -> used to
      * calculate the queries, keys and values.
      */
-    protected List<Double> weights = new ArrayList<>();
+    protected List<double[][]> weights = new ArrayList<>();
 
     /**
      * All biases of the head in one list, (size = inputEmbeddingSize*inputEmbeddingAmount*3) -> used to
      * calculate the queries, keys and values.
      */
-    protected List<Double> biases = new ArrayList<>();
+    protected List<double[][]> biases = new ArrayList<>();
 
     /**
      * The current attention matrix (2d array) -> softmax(dot product/scale + mask)
@@ -62,14 +64,22 @@ public class Head {
         this.attention = new double[inputEmbeddingAmount][inputEmbeddingAmount];
         this.values = new double[inputEmbeddingAmount][inputEmbeddingSize];
 
-        for (int i = 0; i != inputEmbeddingAmount*inputEmbeddingSize*3; i++){
-            weights.add(Connection.getRandomWeight());
-            biases.add(Math.random() * 2 - 1);
+        for (int i = 0; i != 3; i++){
+            double[][] weightMatrix = new double[inputEmbeddingSize][inputEmbeddingAmount];
+            double[][] biasMatrix = new double[inputEmbeddingSize][inputEmbeddingAmount];
+            for (int row = 0; row != inputEmbeddingSize; row++){
+                for (int colum = 0; colum != inputEmbeddingAmount; colum++){
+                    weightMatrix[row][colum] = Connection.getRandomWeight();
+                    biasMatrix[row][colum] = Math.random() * 2 - 1;
+                }
+            }
+            weights.add(weightMatrix);
+            biases.add(biasMatrix);
         }
     }
 
     /**
-     * Generates an output for one input embedding list, regarding the decoder head attention rules.
+     * Inserts an input sequence into this head and calculated the attention
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @throws Exception if the inserted input embeddings don't fit the expectations
      */
@@ -78,19 +88,18 @@ public class Head {
 
         if (!isValidInput(inputEmbeddingLists[0])) throw new Exception("Not a valid input Embedding list!");
 
-        List<List<double[]>> QKVMatrices = generateQKVMatrices(inputEmbeddingLists);
+        List<double[][]> QKVMatrices = generateQKVMatrices(inputEmbeddingLists);
 
-        List<double[]> queries = QKVMatrices.getFirst();
-        List<double[]> keys = QKVMatrices.get(1);
-        List<double[]> values = QKVMatrices.getLast();
+        final double[][] queries = QKVMatrices.getFirst();
+        final double[][] keys = QKVMatrices.get(1);
 
-        this.values = values.toArray(new double[values.size()][]);
-        this.keys = keys.toArray(new double[keys.size()][]);
-        this.queries = queries.toArray(new double[queries.size()][]);
+        this.values = QKVMatrices.getLast();
+        this.keys = keys;
+        this.queries = queries;
 
-        double[][] scaled_masked_dot_product = new double[queries.size()][keys.size()];
-        for (int q = 0; q != queries.size(); q++){
-            for (int k = 0; k != keys.size(); k++){
+        double[][] scaled_masked_dot_product = new double[queries.length][keys.length];
+        for (int q = 0; q != queries.length; q++){
+            for (int k = 0; k != keys.length; k++){
                 // triangular mask (causal mask) only if masked is true
                 if (masked) {
                     if (k > q) {
@@ -100,8 +109,8 @@ public class Head {
 
                 // calculate dot product (sum(vec*vec))
                 double sum = 0;
-                double[] query = queries.get(q);
-                double[] key = keys.get(k);
+                double[] query = queries[q];
+                double[] key = keys[k];
                 for (int i = 0; i != query.length; i++){
                     sum *= query[i] * key[i];
                 }
@@ -109,8 +118,8 @@ public class Head {
             }
         }
 
-        double[][] attention = new double[queries.size()][keys.size()];
-        for (int row = 0; row != queries.size(); row++){
+        double[][] attention = new double[queries.length][keys.length];
+        for (int row = 0; row != queries.length; row++){
             attention[row] = softmax(scaled_masked_dot_product[row]);
         }
         this.attention = attention;
@@ -121,35 +130,34 @@ public class Head {
      * @param inputEmbeddingLists The input Embedding lists -> here it can only contain one embedding-list
      * @return a list of query, key and value matrices
      */
-    protected List<List<double[]>> generateQKVMatrices(Sequence[] inputEmbeddingLists) throws Exception{
-        List<List<double[]>> QKV = new ArrayList<>();
-        int weightIndex = 0;
+    protected List<double[][]> generateQKVMatrices(Sequence[] inputEmbeddingLists) throws Exception{
+        List<double[][]> QKV = new ArrayList<>();
 
-        List<double[]> queries = new ArrayList<>();
-        List<double[]> keys = new ArrayList<>();
-        List<double[]> values = new ArrayList<>();
+        // bad performance fix in future
+        double[][] queries = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddingLists[0].getVerticalMatrix(), weights.getFirst())),
+                biases.getFirst()
+        );
 
-        for (Embedding inputEmbedding : inputEmbeddingLists[0].embeddings()){
-            double[] query = new double[this.inputEmbeddingSize];
-            double[] key = new double[this.inputEmbeddingSize];
-            double[] value = new double[this.inputEmbeddingSize];
-            int i = 0;
-            for (Double embeddingValue : inputEmbedding.data()){
-                query[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
-                key[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
-                value[i] = (embeddingValue * this.weights.get(weightIndex) + this.biases.get(weightIndex));
-                weightIndex++;
-                i++;
-            }
-            queries.add(query);
-            keys.add(key);
-            values.add(value);
-        }
-        QKV.add(queries);
-        QKV.add(keys);
-        QKV.add(values);
+        double[][] keys = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddingLists[0].getVerticalMatrix(), weights.get(1))),
+                biases.get(1)
+        );
+
+        double[][] values = Matrix.add(
+                Objects.requireNonNull(Matrix.multiply(inputEmbeddingLists[0].getVerticalMatrix(), weights.getLast())),
+                biases.getLast()
+        );
+
+        assert queries != null && keys != null && values != null;
+
+        double[][] verticalQueries = Matrix.transpose(queries);
+        double[][] verticalKeys = Matrix.transpose(keys);
+        double[][] verticalValues = Matrix.transpose(values);
+
+        QKV.add(verticalQueries);
+        QKV.add(verticalKeys);
+        QKV.add(verticalValues);
 
         return QKV;
     }
@@ -158,8 +166,9 @@ public class Head {
      * Updates all QKV weights based on delta matrix from MultiHeadAttention weights
      * @param deltas The delta from the mha of this head
      */
-    public void updateQKVWeights(double[][] deltas){
-        // TODO: update deltas and weights based on deltas using the chain-rule and deriving softmax & co
+    public void updateQKVWeights(double[][] deltas, double learningRate){
+        // TODO: update deltas and weights based on head inserted deltas using the chain-rule and deriving softmax & co
+        // partial derive head function with respect to weights (use multiply matrices and transpose)
     }
 
     /**
@@ -167,7 +176,7 @@ public class Head {
      * @return The output for the input Embeddings as a matrix.
      */
     public double[][] getOutput(){
-        return multiplyMatrices(values, attention);
+        return Matrix.multiply(values, attention);
     }
 
     /**
@@ -204,30 +213,6 @@ public class Head {
         }
 
         return result;
-    }
-
-    /**
-     * Multiplies two matrices
-     * @param matrix1 The first matrix needs to have as many columns as the second matrix has rows
-     * @param matrix2 The second matrix needs to have as many rows as the first matrix has columns
-     * @return The result matrix of the multiplication
-     */
-    public static double[][] multiplyMatrices(double[][] matrix1, double[][] matrix2){
-        if (matrix1[0].length != matrix2.length) return null;
-
-        double[][] resultMatrix = new double[matrix1.length][matrix2[0].length];
-
-        for (int row = 0; row < matrix1.length; row++) {
-            for (int col = 0; col < matrix2[0].length; col++) {
-                double sum = 0;
-                for (int k = 0; k < matrix1[0].length; k++) {
-                    sum += matrix1[row][k] * matrix2[k][col];
-                }
-                resultMatrix[row][col] = sum;
-            }
-        }
-
-        return resultMatrix;
     }
 
     public int getInputEmbeddingSize() {

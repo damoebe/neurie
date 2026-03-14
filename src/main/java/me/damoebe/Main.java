@@ -20,11 +20,6 @@ public class Main {
         run();
     }
 
-    static void testMHA(){
-        MultiHeadAttention<Head> mha = new MultiHeadAttention<>(Head.class, 2, 3 ,1, false);
-
-    }
-
     static void run(){
         Dataset dataset = null;
         try {
