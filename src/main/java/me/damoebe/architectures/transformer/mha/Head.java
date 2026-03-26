@@ -1,5 +1,6 @@
 package me.damoebe.architectures.transformer.mha;
 
+import me.damoebe.architectures.Backpropagation;
 import me.damoebe.architectures.mlp.structure.Connection;
 import me.damoebe.architectures.transformer.embedding.Embedding;
 import me.damoebe.architectures.transformer.embedding.Matrix;
@@ -13,7 +14,7 @@ import java.util.Objects;
 /**
  * The Decoder and Encoder Head Object class
  */
-public class Head {
+public class Head implements Backpropagation {
 
     /**
      * All weights of the head in one list, (size = inputEmbeddingSize*inputEmbeddingAmount*3) -> used to
@@ -103,7 +104,8 @@ public class Head {
                 // triangular mask (causal mask) only if masked is true
                 if (masked) {
                     if (k > q) {
-                        scaled_masked_dot_product[q][k] = -Double.MAX_VALUE;
+                        scaled_masked_dot_product[q][k] = Double.NEGATIVE_INFINITY;
+                        continue;
                     }
                 }
 
@@ -112,7 +114,7 @@ public class Head {
                 double[] query = queries[q];
                 double[] key = keys[k];
                 for (int i = 0; i != query.length; i++){
-                    sum *= query[i] * key[i];
+                    sum += query[i] * key[i];
                 }
                 scaled_masked_dot_product[q][k] = sum / Math.sqrt(key.length); // scaling
             }
@@ -165,10 +167,12 @@ public class Head {
     /**
      * Updates all QKV weights based on delta matrix from MultiHeadAttention weights
      * @param deltas The delta from the mha of this head
+     * @return The new deltas for the next backpropagation step
      */
-    public void updateQKVWeights(double[][] deltas, double learningRate){
+    public double[][] backPropagate(double[][] deltas){
         // TODO: update deltas and weights based on head inserted deltas using the chain-rule and deriving softmax & co
         // partial derive head function with respect to weights (use multiply matrices and transpose)
+        return null;
     }
 
     /**

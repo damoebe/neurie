@@ -1,5 +1,6 @@
 package me.damoebe.architectures.transformer.mha;
 
+import me.damoebe.architectures.Backpropagation;
 import me.damoebe.architectures.mlp.structure.Connection;
 import me.damoebe.architectures.transformer.embedding.Embedding;
 import me.damoebe.architectures.transformer.embedding.Matrix;
@@ -14,7 +15,7 @@ import java.util.Objects;
  * A container class for Heads
  * @param <H> The type of head that is used stored in the class
  */
-public class MultiHeadAttention<H extends Head> implements Cloneable{
+public class MultiHeadAttention<H extends Head> implements Cloneable, Backpropagation {
     /**
      * A list of all heads that are contained in a MultiHeadAttention object
      */
@@ -108,42 +109,19 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
     }
 
     /**
-     * Merges a list of matrices.
-     * @param matrices the matrices that will be concat
-     * @return the merged matrix as a 2d array
-     */
-    public static double[][] concatMatrices(List<double[][]> matrices){
-        int rows = matrices.getFirst().length;
-        int columns = 0;
-
-        for (double[][] matrix : matrices){
-            columns += matrix[0].length;
-        }
-
-        double[][] result = new double[rows][columns];
-
-        int columnOffset = 0;
-
-        for (double[][] matrix : matrices){
-            for(int row = 0; row < rows; row++){
-                System.arraycopy(matrix[row], 0, result[row], columnOffset, matrix[0].length);
-            }
-            columnOffset += matrix[0].length;
-        }
-
-        return result;
-    }
-
-    /**
      * Updates All head QKV weights as well as the weights which are used to merge the head matrices
      * @param deltas The first hidden-layer deltas of the block's mlp
      */
-    public void updateAllWeights(double[][] deltas){
+    @Override
+    public double[][] backPropagate(double[][] deltas){
         updateWeights(deltas);
+        List<double[][]> newDeltas = new ArrayList<>();
         List<double[][]> headDeltas = generateHeadDeltas(deltas);
         for (int headIndex = 0; headIndex != heads.size(); headIndex++){
-            heads.get(headIndex).updateQKVWeights(headDeltas.get(headIndex), learningRate);
+            newDeltas.add(heads.get(headIndex).backPropagate(headDeltas.get(headIndex)));
         }
+        // TODO: Merge new deltas and return delta matrix
+        return null;
     }
 
     /**
@@ -199,6 +177,33 @@ public class MultiHeadAttention<H extends Head> implements Cloneable{
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    /**
+     * Merges a list of matrices.
+     * @param matrices the matrices that will be concat
+     * @return the merged matrix as a 2d array
+     */
+    public static double[][] concatMatrices(List<double[][]> matrices){
+        int rows = matrices.getFirst().length;
+        int columns = 0;
+
+        for (double[][] matrix : matrices){
+            columns += matrix[0].length;
+        }
+
+        double[][] result = new double[rows][columns];
+
+        int columnOffset = 0;
+
+        for (double[][] matrix : matrices){
+            for(int row = 0; row < rows; row++){
+                System.arraycopy(matrix[row], 0, result[row], columnOffset, matrix[0].length);
+            }
+            columnOffset += matrix[0].length;
+        }
+
+        return result;
     }
 
     /**
